@@ -11,7 +11,7 @@ Tested in versions: 2.10.6; 2.11.12; 3.1.11; 3.2.1
 The plugin is available as a Python package in pypi and can be installed with pip
 
 ```
-pip install nbservice
+pip install nb-service
 ```
 Enable the plugin in /opt/netbox/netbox/netbox/configuration.py:
 ```
