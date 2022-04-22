@@ -1,0 +1,2 @@
+recursive-include nb_service/templates *.html
+recursive-include nb_service/static *.js.*

@@ -1,0 +1,120 @@
+{% extends 'base/layout.html' %}
+{% load render_table from django_tables2 %}
+{% load nb_buttons %}
+{% load static %}
+{% load helpers %}
+{% load nb_helpers %}
+{% load custom_links %}
+{% load plugins %}
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    {# Breadcrumbs #}
+    <nav class="breadcrumb-container px-3" aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        {% block breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{% url object|plugin_viewname:'list' %}">{{ object|meta:'verbose_name'|bettertitle }}</a></li>
+        {% endblock breadcrumbs %}
+      </ol>
+    </nav>
+ 
+   {# Object identifier #}
+   <div class="float-end px-3">
+    <code class="text-muted">
+      {% block object_identifier %}
+        plugins.{{ object|meta:"app_label" }}.{{ object|meta:"model_name" }}:{{ object.pk }}
+        {% if object.slug %}({{ object.slug }}){% endif %}
+      {% endblock object_identifier %}
+    </code>
+</div></div>
+  {{ block.super }}
+{% endblock %}
+
+{% block title %}{{ object }}{% endblock %}
+
+{% block controls %}
+  <div class="controls">
+    <div class="control-group">
+      {% clone_button object %}
+      {% edit_button object %}
+      {% delete_button object %}
+    </div>
+  </div>
+{% endblock controls %}
+
+{% block tabs %}
+  <ul class="nav nav-tabs px-3">
+    {% block tab_items %}
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active" href="{{ object.get_absolute_url }}">Application</a>
+      </li>
+      <li role="presentation">
+        <a class="nav-link" href="{% url 'plugins:nb_service:application_devices' pk=object.pk %}">Devices</a>
+      </li>
+      <li role="presentation">
+          <a class="nav-link" href="{% url 'plugins:nb_service:application_vms' pk=object.pk %}">Virtual Machines</a>
+      </li>
+      {% endblock tab_items %}
+      {% if perms.extras.view_journalentry %}
+      {% with journal_viewname=object|viewname:'journal' %}
+          {% url journal_viewname pk=object.pk as journal_url %}
+          {% if journal_url %}
+          <li role="presentation" class="nav-item">
+              <a href="{{ journal_url }}" class="nav-link{% if active_tab == 'journal'%} active{% endif %}">
+              Journal {% badge object.journal_entries.count %}
+              </a>
+          </li>
+          {% endif %}
+      {% endwith %}
+      {% endif %}
+      {% if perms.extras.view_objectchange %}
+      {% with changelog_viewname=object|viewname:'changelog' %}
+          {% url changelog_viewname pk=object.pk as changelog_url %}
+          {% if changelog_url %}
+          <li role="presentation" class="nav-item">
+              <a href="{{ changelog_url }}" class="nav-link{% if active_tab == 'changelog'%} active{% endif %}">Change Log</a>
+          </li>
+          {% endif %}
+      {% endwith %}
+      {% endif %}
+  </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="details">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <strong>Application</strong>
+                                </div>
+                                <table class="table table-hover panel-body attr-table">
+                                    <tr>
+                                        <td>Name</td>
+                                        <td>{{ object.name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Version</td>
+                                        <td>{{ object.version }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Ports</td>
+                                        <td>{{ object.ports }}</td>
+                                    </tr>
+                                    
+                                </table>
+                            </div>
+                        </div>                      
+                    </div>             
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block modals %}
+  {% include 'inc/htmx_modal.html' %}
+{% endblock modals %}

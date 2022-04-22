@@ -1,0 +1,134 @@
+{% extends 'base/layout.html' %}
+{% load render_table from django_tables2 %}
+{% load nb_buttons %}
+{% load static %}
+{% load helpers %}
+{% load nb_helpers %}
+{% load custom_links %}
+{% load plugins %}
+
+{% block header %}
+<div class="d-flex justify-content-between align-items-center">
+    {# Breadcrumbs #}
+    <nav class="breadcrumb-container px-3" aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        {% block breadcrumbs %}
+          <li class="breadcrumb-item"><a href="{% url object|plugin_viewname:'list' %}">{{ object|meta:'verbose_name'|bettertitle }}</a></li>
+        {% endblock breadcrumbs %}
+      </ol>
+    </nav>
+ 
+   {# Object identifier #}
+   <div class="float-end px-3">
+    <code class="text-muted">
+      {% block object_identifier %}
+        plugins.{{ object|meta:"app_label" }}.{{ object|meta:"model_name" }}:{{ object.pk }}
+        {% if object.slug %}({{ object.slug }}){% endif %}
+      {% endblock object_identifier %}
+    </code>
+</div></div>
+  {{ block.super }}
+{% endblock %}
+
+{% block title %}{{ object }}{% endblock %}
+
+{% block controls %}
+  {# Clone/Edit/Delete Buttons #}
+  <div class="controls">
+    <div class="control-group">
+      {% plugin_buttons object %}
+      {# Extra buttons #}
+      <div class="dropdown">
+        <button id="add-device-components" type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="mdi mdi-plus-thick" aria-hidden="true"></i> Add Components
+        </button>
+        <ul class="dropdown-menu" aria-labeled-by="add-device-components">
+          <li>
+            <a class="dropdown-item" href="{% url 'plugins:nb_service:IC_add' %}?service={{ object.pk }}&return_url={{ object.get_absolute_url }}">
+                Configuration Item
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'plugins:nb_service:pentest_add' %}?service={{ object.pk }}&return_url={{ object.get_absolute_url }}">
+                Vulnerability assessment
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'plugins:nb_service:relation_add' %}?service={{ object.pk }}&return_url={{ object.get_absolute_url }}">
+                Configuration Item Relationship
+            </a>
+          </li>
+        </ul>
+      </div>
+      {% clone_button object %}
+      {% edit_button object %}
+      {% delete_button object %}
+    </div>
+  </div>
+{% endblock controls %}
+
+{% block tabs %}
+    <ul class="nav nav-tabs px-3">
+        {% block tab_items %}
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{{ object.get_absolute_url }}">{{ object|meta:"verbose_name"|bettertitle }}</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{% url 'plugins:nb_service:service_IC' pk=object.pk %}">Configuration Itens</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link  active" href="{% url 'plugins:nb_service:service_relation' pk=object.pk %}">Relationships</a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a class="nav-link" href="{% url 'plugins:nb_service:service_diagram' pk=object.pk %}">Diagram</a>
+        </li>
+        {% endblock tab_items %}
+        {% if perms.extras.view_journalentry %}
+        {% with journal_viewname=object|viewname:'journal' %}
+            {% url journal_viewname pk=object.pk as journal_url %}
+            {% if journal_url %}
+            <li role="presentation" class="nav-item">
+                <a href="{{ journal_url }}" class="nav-link{% if active_tab == 'journal'%} active{% endif %}">
+                Journal {% badge object.journal_entries.count %}
+                </a>
+            </li>
+            {% endif %}
+        {% endwith %}
+        {% endif %}
+        {% if perms.extras.view_objectchange %}
+        {% with changelog_viewname=object|viewname:'changelog' %}
+            {% url changelog_viewname pk=object.pk as changelog_url %}
+            {% if changelog_url %}
+            <li role="presentation" class="nav-item">
+                <a href="{{ changelog_url }}" class="nav-link{% if active_tab == 'changelog'%} active{% endif %}">Change Log</a>
+            </li>
+            {% endif %}
+        {% endwith %}
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="details">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <strong>Configuration Itens</strong>
+                                </div>
+                                {% include 'nb_service/3.x/Relation/inc/relation_table.html' %}
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block modals %}
+  {% include 'inc/htmx_modal.html' %}
+{% endblock modals %}

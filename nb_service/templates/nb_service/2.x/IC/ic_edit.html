@@ -1,0 +1,46 @@
+{% extends 'nb_service/2.x/obj_edit.html' %}
+{% load static %}
+{% load form_helpers %}
+{% load helpers %}
+
+{% block form %}
+    <div class="panel panel-default">
+        <div class="panel-heading"><strong>Configuration Item</strong></div>
+        <div class="panel-body">
+            {% render_field form.service %}
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <strong>Object Assignment</strong>
+        </div>
+        <div class="panel-body">
+            {% with vm_tab_active=form.initial.virtual_machine %}
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation"{% if not vm_tab_active %} class="active"{% endif %}><a href="#device" role="tab" data-toggle="tab">Device</a></li>
+                <li role="presentation"{% if vm_tab_active %} class="active"{% endif %}><a href="#virtualmachine" role="tab" data-toggle="tab">Virtual Machine</a></li>
+                <li role="presentation"{% if vm_tab_active %} class="active"{% endif %}><a href="#application" role="tab" data-toggle="tab">Application</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane{% if not vm_tab_active %} active{% endif %}" id="device">
+                    {% render_field form.device %}
+                </div>
+                <div class="tab-pane{% if vm_tab_active %} active{% endif %}" id="virtualmachine">
+                    {% render_field form.virtual_machine %}
+                </div>
+                <div class="tab-pane{% if vm_tab_active %} active{% endif %}" id="application">
+                    {% render_field form.application %}
+                </div>
+            </div>
+            {% endwith %}
+        </div>
+
+        {% if form.custom_fields %}
+        <div class="panel panel-default">
+            <div class="panel-heading"><strong>Custom Fields</strong></div>
+            <div class="panel-body">
+                {% render_custom_fields form %}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
