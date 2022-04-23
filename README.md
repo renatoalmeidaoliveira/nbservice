@@ -8,24 +8,20 @@ Tested in versions: 2.10.6; 2.11.12; 3.1.11; 3.2.1
 
 ## Installation
 
-The plugin is available as a Python package in pypi and can be installed with pip
+Add the following line to /opt/netbox/local_requirements.txt with
+```
+nb-service
+```
 
-```
-pip install nb-service
-```
 Enable the plugin in /opt/netbox/netbox/netbox/configuration.py:
 ```
 PLUGINS = ['nb_service']
 ```
-The Plugin contains static files for topology visualization. They should be served directly by the HTTP frontend. In order to collect them from the package to the Netbox static root directory use the following command:
+
+Runs /opt/netbox/upgrade.sh
+
 ```
-(venv) $ cd /opt/netbox/netbox/
-(venv) $ python3 manage.py collectstatic
-```
-The Plugin was built for multiple Netbox Versions, so in order to setup the database objects run make migrations, and aply the database models
-```
-(venv) $ python3 manage.py makemigrations nb_service
-(venv) $ python3 manage.py migrate nb_service
+sudo /opt/netbox/upgrade.sh
 ```
 
 # Screenshots
