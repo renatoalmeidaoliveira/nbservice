@@ -39,9 +39,9 @@ class ServiceFilter(django_filters.FilterSet):
     )
 
     clients = django_filters.ModelMultipleChoiceFilter(
-        field_name="clients__name",
+        field_name="clients__id",
         queryset=Tenant.objects.all(),
-        to_field_name="name",
+        to_field_name="id",
     )
 
     def search(self, queryset, name, value):
