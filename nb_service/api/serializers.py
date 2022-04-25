@@ -35,16 +35,20 @@ class NestedApplicationSerializer(WritableNestedSerializer):
 class nb_Applicationserializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField()
+    display = serializers.SerializerMethodField('get_display')
     protocol = ChoiceField(choices=ServiceProtocolChoices, required=False)
     version = serializers.CharField()
     devices = NestedDeviceSerializer(many=True,required=False, allow_null=True)
     vm = NestedVirtualMachineSerializer(many=True,required=False, allow_null=True)
 
+    def get_display(self, obj):
+        return f"{obj}"
 
     class Meta:
         model = models.Application
         fields = [
             'id',
+            'display',
             'name',
             'protocol',
             'ports',
@@ -90,10 +94,15 @@ class nb_ICserializer(serializers.Serializer):
 class nb_ServiceSerializer(serializers.Serializer):
 
     name = serializers.CharField()
+    display = serializers.SerializerMethodField('get_display')
     clients = NestedTenantSerializer(many=True,required=False, allow_null=True)
     comments = serializers.CharField()
     backup_profile = serializers.CharField(required=False)
 
+
+    def get_display(self, obj):
+        return obj.name
+
     class Meta:
         model = models.Service
-        fields = ['name', 'clients', 'comments', 'backup_profile']
+        fields = ['id', 'display', 'name', 'clients', 'comments', 'backup_profile']
