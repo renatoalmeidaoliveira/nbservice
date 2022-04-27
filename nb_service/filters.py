@@ -24,6 +24,15 @@ class ICFilter(django_filters.FilterSet):
         to_field_name="id",
     )
 
+    def search(self, queryset, name, value):
+        if not value.strip():
+            return queryset
+        ids = []
+        for ic in queryset:
+            if value in ic.name:
+                ids.append(ic.id)
+        return queryset.filter(id__in = ids)
+
     class Meta:
         model = models.IC
 
