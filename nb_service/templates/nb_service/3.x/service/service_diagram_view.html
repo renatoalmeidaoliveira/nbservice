@@ -64,6 +64,9 @@
       {% clone_button object %}
       {% edit_button object %}
       {% delete_button object %}
+      <a id="diagram-download" type="button" class="btn btn-sm btn-info">
+        <i class="mdi mdi-download"></i> Export
+      </a>
     </div>
   </div>
 {% endblock controls %}
@@ -117,7 +120,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="panel panel-default">
-                                <div class="mermaid" style="text-align: center;">
+                                <div class="mermaid" style="text-align: center; width: 100%; overflow-x: scroll; ">
                                     {{ object.diagram | safe }}                                    
                                 </div>
                             </div>
@@ -127,6 +130,7 @@
             </div>
         </div>
     </div>
+    <script src="{% static 'nb_service/export_svg.js' %}"></script>
 {% endblock %}
 
 {% block modals %}

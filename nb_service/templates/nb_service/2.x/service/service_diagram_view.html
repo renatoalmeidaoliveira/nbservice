@@ -25,6 +25,9 @@
         </div>
         {% edit_button object %}
         {% delete_button object %}
+        <a id="diagram-download" type="button" class="btn btn-success">
+            <span class="mdi mdi-database-export" aria-hidden="true"></span> Export
+        </a>
     </div>
     <h1>{{ object }}</h1>
     <ul class="nav nav-tabs">
@@ -54,7 +57,7 @@
                                 <div class="panel-heading">
                                     <strong>Diagram</strong>
                                 </div>
-                                <div class="mermaid" style="text-align: center;">
+                                <div class="mermaid" style="text-align: center; width: 100%; overflow-x: scroll;">
                                     {{ object.diagram | safe }}                                    
                                 </div>
                             </div>
@@ -64,5 +67,6 @@
             </div>
         </div>
     </div>
+    <script src="{% static 'nb_service/export_svg.js' %}"></script>
 {% endblock %}
 
