@@ -13,7 +13,13 @@ class MyModel1Serializer(ModelSerializer):
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
-from netbox.api import ChoiceField, ContentTypeField, WritableNestedSerializer
+NETBOX_CURRENT_VERSION = version.parse(settings.VERSION)
+if NETBOX_CURRENT_VERSION >= version.parse("3.3") :
+    from netbox.api.fields import ChoiceField, ContentTypeField
+    from netbox.api.serializers import WritableNestedSerializer
+else:
+    from netbox.api import ChoiceField, ContentTypeField, WritableNestedSerializer
+
 from utilities.api import get_serializer_for_model
 from tenancy.api.nested_serializers import NestedTenantSerializer
 from ipam.choices import ServiceProtocolChoices
