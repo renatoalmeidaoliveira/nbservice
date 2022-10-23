@@ -14,6 +14,7 @@ from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
 
+from django.conf import settings
 from packaging import version
 NETBOX_CURRENT_VERSION = version.parse(settings.VERSION)
 if NETBOX_CURRENT_VERSION >= version.parse("3.3"):
