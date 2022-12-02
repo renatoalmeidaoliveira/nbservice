@@ -1,15 +1,3 @@
-"""
-from rest_framework.serializers import ModelSerializer
-
-from nb_service.models import MyModel1
-
-
-class MyModel1Serializer(ModelSerializer):
-
-    class Meta:
-        model = MyModel1
-        fields = '__all__'
-"""
 from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
