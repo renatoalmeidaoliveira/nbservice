@@ -12,9 +12,11 @@ from django.conf import settings
 from packaging import version
 
 NETBOX_CURRENT_VERSION = version.parse(settings.VERSION)
-if NETBOX_CURRENT_VERSION >= version.parse("3.2") :
+if NETBOX_CURRENT_VERSION >= version.parse("3.3") :
+    from netbox.api.routers import NetBoxRouter
+elif NETBOX_CURRENT_VERSION >= version.parse("3.2") :
     from netbox.api import NetBoxRouter
-else: 
+else:
     from netbox.api import OrderedDefaultRouter as NetBoxRouter
 
 from . import views

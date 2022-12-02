@@ -24,7 +24,7 @@ def get_version(rel_path):
 
 
 setup(
-    name='',
+    name='nb_service',
     version=get_version('nb_service/version.py'),
     description='',
     long_description=long_description,
