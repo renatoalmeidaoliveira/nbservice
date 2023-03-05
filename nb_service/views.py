@@ -35,7 +35,9 @@ class ServiceListView(generic.ObjectListView):
     actions = action_buttons
 
     def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
+        if NETBOX_CURRENT_VERSION >= version.parse("3.4") :
+            self.template_name = 'nb_service/3.x/custom_list_3.4.html'
+        elif NETBOX_CURRENT_VERSION >= version.parse("3.0") and NETBOX_CURRENT_VERSION < version.parse("3.4"):
             self.template_name = 'nb_service/3.x/custom_list.html'
         else:
             self.template_name = 'nb_service/2.x/custom_list.html'        
@@ -262,7 +264,9 @@ class ApplicationListView(generic.ObjectListView):
     action_buttons = ("add")
 
     def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
+        if NETBOX_CURRENT_VERSION >= version.parse("3.4") :
+            self.template_name = 'nb_service/3.x/custom_list_3.4.html'
+        elif NETBOX_CURRENT_VERSION >= version.parse("3.0") and NETBOX_CURRENT_VERSION < version.parse("3.4"):
             self.template_name = 'nb_service/3.x/custom_list.html'
         else:
             self.template_name = 'nb_service/2.x/custom_list.html'
