@@ -5,7 +5,9 @@ from circuits.models import Circuit, Provider
 from tenancy.models import Tenant
 from ipam.models import Service
 from virtualization.models import VirtualMachine
-from utilities.forms import BootstrapMixin, DatePicker, DynamicModelMultipleChoiceField, DynamicModelChoiceField
+from utilities.forms import BootstrapMixin
+from utilities.forms.fields import DynamicModelMultipleChoiceField, DynamicModelChoiceField
+from utilities.forms.widgets import DatePicker
 
 
 from . import utils
@@ -76,7 +78,7 @@ class ICForm(BootstrapMixin, forms.ModelForm):
 
 
 class PenTestForm(BootstrapMixin, forms.ModelForm):
-    
+
     class Meta:
         model = models.PenTest
         fields = [
@@ -129,7 +131,7 @@ class RelationForm(BootstrapMixin, forms.ModelForm):
         ]
 
 class ServiceFilterForm(BootstrapMixin, forms.ModelForm):
-    
+
     q = forms.CharField(
         required=False,
         label='Search'
@@ -140,14 +142,14 @@ class ServiceFilterForm(BootstrapMixin, forms.ModelForm):
     )
 
     class Meta:
-        model = models.Service 
-        fields = [ 
+        model = models.Service
+        fields = [
             'q',
             'clients',
         ]
 
 class ApplicationFilterForm(BootstrapMixin, forms.ModelForm):
-    
+
     q = forms.CharField(
         required=False,
         label='Search'
@@ -156,15 +158,15 @@ class ApplicationFilterForm(BootstrapMixin, forms.ModelForm):
         queryset=Device.objects.all(),
         required=False,
     )
-    
+
     virtual_machines = DynamicModelMultipleChoiceField(label="Virtual Machines",
         queryset=VirtualMachine.objects.all(),
         required=False,
     )
 
     class Meta:
-        model = models.Service 
-        fields = [ 
+        model = models.Service
+        fields = [
             'q',
             'devices',
             'virtual_machines',
