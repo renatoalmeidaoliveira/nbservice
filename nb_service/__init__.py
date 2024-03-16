@@ -4,11 +4,13 @@ from .version import __version__
 
 class NbserviceConfig(PluginConfig):
     name = 'nb_service'
+    base_url = 'nb_service'
     verbose_name = 'Service Management'
-    description = ''
+    description = 'ITSM Service Management'
     version = __version__
-    author = ''
-    author_email = ''
+    author = 'Renato Almeida de Oliveira'
+    author_email = 'renato.almeida.oliveira@gmail.com'
+    min_version = "3.5.0"
     required_settings = []
     default_settings = {}
 
