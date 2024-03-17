@@ -47,10 +47,10 @@
                         {{ relation.link_text }}
                     </td>
                     <td class="text-right noprint">
-                        <a href="{% url 'plugins:nb_service:relation_edit' pk=relation.pk %}?return_url={% url 'plugins:nb_service:service_relation' pk=object.pk %}" class="btn btn-info btn-xs" title="Edit Relation">
+                        <a href="{% url 'plugins:nb_service:relation_edit' pk=relation.pk %}?return_url={% url 'plugins:nb_service:service_Relationships' pk=object.pk %}" class="btn btn-info btn-xs" title="Edit Relation">
                             <i class="mdi mdi-pencil"></i>
                         </a>
-                        <a href="{% url 'plugins:nb_service:relation_delete' pk=relation.pk %}?return_url={% url 'plugins:nb_service:service_relation' pk=object.pk %}" class="btn btn-danger btn-xs">
+                        <a href="{% url 'plugins:nb_service:relation_delete' pk=relation.pk %}?return_url={% url 'plugins:nb_service:service_Relationships' pk=object.pk %}" class="btn btn-danger btn-xs">
                             <i class="mdi mdi-trash-can-outline" title="Delete Relation"></i>
                         </a>
                     </td>

@@ -1,25 +1,17 @@
-import logging
 from . import models 
 from . import filters
 from . import forms 
 from . import tables
+
 from django.conf import settings
 from packaging import version
-from django.contrib.contenttypes.models import ContentType
 from netbox.views import generic
 from tenancy.tables import TenantTable
 from virtualization.models import VirtualMachine
 from dcim.models import Device
 from dcim.tables import DeviceTable
 from virtualization.tables import VirtualMachineTable
-from utilities.utils import normalize_querydict 
-from utilities.forms import restrict_form_fields, ConfirmationForm
-from django.shortcuts import get_object_or_404, redirect, render
-from django.db import transaction
-from django.utils.html import escape
-from django.contrib import messages
-from django.utils.safestring import mark_safe
-from utilities.permissions import get_permission_for_model
+from utilities.views import ViewTab, register_model_view
 
 
 
@@ -31,84 +23,31 @@ class ServiceListView(generic.ObjectListView):
     table = tables.ServiceTable
     filterset = filters.ServiceFilter
     filterset_form = forms.ServiceFilterForm
-    action_buttons = ("add")
-    actions = action_buttons
 
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.4") :
-            self.template_name = 'nb_service/3.x/custom_list_3.4.html'
-        elif NETBOX_CURRENT_VERSION >= version.parse("3.0") and NETBOX_CURRENT_VERSION < version.parse("3.4"):
-            self.template_name = 'nb_service/3.x/custom_list.html'
-        else:
-            self.template_name = 'nb_service/2.x/custom_list.html'        
-        super().__init__(*args, *kwargs)
-
-    def get_extra_context(self, request):
-        data = {}
-        model = self.queryset.model
-        permissions = {}
-        for action in ('add', 'change', 'delete', 'view'):
-            perm_name = get_permission_for_model(model, action)
-            permissions[action] = request.user.has_perm(perm_name)
-
-        content_type = ContentType.objects.get_for_model(model)
-        if NETBOX_CURRENT_VERSION >= version.parse("3.2"):
-            data['content_type'] = content_type
-            data['permissions'] = permissions
-            data['action_buttons'] = self.action_buttons
-
-        return data
 
 class ServiceView(generic.ObjectView):
     queryset = models.Service.objects.all()
 
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/service/service_view.html'
-        else:
-            self.template_name = 'nb_service/2.x/service/service_view.html'     
-        super().__init__(*args, *kwargs)
-
     def get_extra_context(self, request, instance):
-        items_obj = instance.config_itens.all()
-        objetos_table = tables.ICTable(items_obj)
         tenants_table = TenantTable(instance.clients.all())
         vuln_table = tables.VulnTable(instance.pentest_reports.all())
-        model = self.queryset.model
-        permissions = {}
-        for action in ('add', 'change', 'delete', 'view'):
-            perm_name = get_permission_for_model(model, action)
-            permissions[action] = request.user.has_perm(perm_name)
 
         data = {
                 "tenant_table" : tenants_table,
-                "permissions": permissions,
                 "vuln_table" : vuln_table,
-                "objetos_table": objetos_table,
-                "config_items" : items_obj,
             }
         return data
 
-
-class ServiceDiagramView(generic.ObjectView):
+@register_model_view(models.Service, name='IC')
+class ServiceICView(generic.ObjectChildrenView):
     queryset = models.Service.objects.all()
+    table = tables.ServiceTable
+    template_name = "nb_service/service_IC_view.html"
+    tab = ViewTab(label='IC', badge=lambda obj: obj.config_itens.all().count(), hide_if_empty=True)
 
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/service/service_diagram_view.html'
-        else:
-            self.template_name = 'nb_service/2.x/service/service_diagram_view.html'  
-        super().__init__(*args, *kwargs)
-
-class ServiceICView(generic.ObjectView):
-    queryset = models.Service.objects.all()
-
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/service/service_IC_view.html'
-        else:
-            self.template_name = 'nb_service/2.x/service/service_IC_view.html'
-        super().__init__(*args, *kwargs)
+    def get_children(self, request, parent):
+            childrens = parent.config_itens.all()
+            return childrens
 
     def get_extra_context(self, request, instance):
         items_obj = instance.config_itens.all()
@@ -117,15 +56,18 @@ class ServiceICView(generic.ObjectView):
             }
         return data
 
-class ServiceRelationView(generic.ObjectView):
-    queryset = models.Service.objects.all()
 
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/service/service_Relation_view.html'
-        else:
-            self.template_name = 'nb_service/2.x/service/service_Relation_view.html'
-        super().__init__(*args, *kwargs)
+@register_model_view(models.Service, name='Relationships')
+class ServiceRelationView(generic.ObjectChildrenView):
+    queryset = models.Service.objects.all()
+    child_model = models.Relation
+    table = tables.ServiceTable
+    template_name = "nb_service/service_Relation_view.html"
+    tab = ViewTab(label='Relationships', badge=lambda obj: obj.relationships.all().count(), hide_if_empty=True)
+
+    def get_children(self, request, parent):
+            childrens = parent.relationships.all()
+            return childrens
 
     def get_extra_context(self, request, instance):
         relations = instance.relationships.all()
@@ -133,6 +75,18 @@ class ServiceRelationView(generic.ObjectView):
                 "relations_objs" : relations,
             }
         return data
+
+@register_model_view(models.Service, name='Diagram')
+class ServiceDiagramView(generic.ObjectChildrenView):
+    queryset = models.Service.objects.all()
+    child_model = models.Service
+    table = tables.ServiceTable
+    template_name = "nb_service/service_diagram_view.html"
+    tab = ViewTab(label='Diagram')
+
+    def get_children(self, request, parent):
+            childrens = parent.relationships.all()
+            return childrens
 
 
 class ServiceEditView(generic.ObjectEditView):
@@ -261,32 +215,6 @@ class ApplicationListView(generic.ObjectListView):
     table = tables.ApplicationTable
     filterset = filters.ApplicationFilter
     filterset_form = forms.ApplicationFilterForm
-    action_buttons = ("add")
-
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.4") :
-            self.template_name = 'nb_service/3.x/custom_list_3.4.html'
-        elif NETBOX_CURRENT_VERSION >= version.parse("3.0") and NETBOX_CURRENT_VERSION < version.parse("3.4"):
-            self.template_name = 'nb_service/3.x/custom_list.html'
-        else:
-            self.template_name = 'nb_service/2.x/custom_list.html'
-        super().__init__(*args, *kwargs)
-
-    def get_extra_context(self, request):
-        data = {}
-        model = self.queryset.model
-        permissions = {}
-        for action in ('add', 'change', 'delete', 'view'):
-            perm_name = get_permission_for_model(model, action)
-            permissions[action] = request.user.has_perm(perm_name)
-
-        content_type = ContentType.objects.get_for_model(model)
-        if NETBOX_CURRENT_VERSION >= version.parse("3.2"):
-            data['content_type'] = content_type
-            data['permissions'] = permissions
-            data['action_buttons'] = self.action_buttons
-
-        return data
 
 class ApplicationView(generic.ObjectView):
     queryset = models.Application.objects.all()

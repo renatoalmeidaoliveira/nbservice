@@ -21,3 +21,7 @@ class ApplicationViewSet(NetBoxModelViewSet):
 class RelationViewSet(NetBoxModelViewSet):
     queryset = models.Relation.objects.all()
     serializer_class = serializers.RelationSerializer
+
+class PenTestViewSet(NetBoxModelViewSet):
+    queryset = models.PenTest.objects.all()
+    serializer_class = serializers.PenTestSerializer

@@ -4,6 +4,7 @@ from tenancy.models import Tenant
 from dcim.models import Device
 from virtualization.models import VirtualMachine
 
+
 from . import models
 
 class ICFilter(django_filters.FilterSet):

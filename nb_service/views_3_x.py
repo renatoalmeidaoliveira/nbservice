@@ -76,8 +76,6 @@ class ApplicationDeleteView(generic.ObjectDeleteView):
         })
 
 
-class ServiceChangeLogView(ObjectChangeLogView):
-    base_template = 'nb_service/3.x/service/service_ChangeLog_view.html'
 
 class ApplicationChangeLogView(ObjectChangeLogView):
     base_template = 'nb_service/3.x/Application/application_ChangeLog.html'

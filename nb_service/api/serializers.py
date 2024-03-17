@@ -134,3 +134,22 @@ class RelationSerializer(serializers.Serializer):
             "connector_shape",
             "link_text",
         ]
+
+class PenTestSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    service = serializers.SlugRelatedField(
+        slug_field="name", queryset=models.Service.objects.all()
+    )
+
+
+    class Meta:
+        model = models.PenTest
+        fields = [
+            "id",
+            "service",
+            "status",
+            "comments",
+            "date",
+            "ticket",
+            "report_link"
+        ]
