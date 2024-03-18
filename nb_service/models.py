@@ -12,9 +12,12 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 
+from taggit.managers import TaggableManager
+
 
 # Netbox imports
 from utilities.querysets import RestrictedQuerySet
+
 
 from dcim.models import Device
 from virtualization.models import VirtualMachine
@@ -51,6 +54,12 @@ class Service(modeltypes.NetBoxModel):
     )
     comments = models.TextField(blank=True)
     backup_profile = models.CharField("Backup Profile", max_length=100)
+
+    tags = TaggableManager(
+        through="extras.TaggedItem",
+        related_name="itsm_contact_set",
+    )
+
 
     @property
     def diagram(self):

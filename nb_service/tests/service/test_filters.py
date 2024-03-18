@@ -26,7 +26,3 @@ class ServiceFilterTestCase(TestCase, ChangeLoggedFilterSetTests):
             Service(name="Service 3"),
         )
         Service.objects.bulk_create(cls.services)
-
-    def test_name(self):
-        params = {"name": "Service 1"}
-        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)

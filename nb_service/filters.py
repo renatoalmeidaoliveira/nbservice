@@ -4,11 +4,12 @@ from tenancy.models import Tenant
 from dcim.models import Device
 from virtualization.models import VirtualMachine
 
+from netbox.filtersets import NetBoxModelFilterSet
 
 from . import models
 
 class ICFilter(django_filters.FilterSet):
-    
+
     q = django_filters.CharFilter(
         method="search",
         label="Search",
@@ -41,8 +42,8 @@ class ICFilter(django_filters.FilterSet):
             "service",
         ]
 
-class ServiceFilter(django_filters.FilterSet):
-    
+class ServiceFilter(NetBoxModelFilterSet):
+
     q = django_filters.CharFilter(
         method="search",
         label="Search",
@@ -59,22 +60,22 @@ class ServiceFilter(django_filters.FilterSet):
             return queryset
         qs_filter = (
             Q(name__icontains=value) |
-            Q(clients__name__icontains=value) 
+            Q(clients__name__icontains=value)
         )
         return queryset.filter(qs_filter)
-
 
 
     class Meta:
         model = models.Service
 
         fields = [
+            "id",
             "name",
             "clients",
         ]
 
 class ApplicationFilter(django_filters.FilterSet):
-    
+
     q = django_filters.CharFilter(
         method="search",
         label="Search",
@@ -96,7 +97,7 @@ class ApplicationFilter(django_filters.FilterSet):
 
         if not value.strip():
             return queryset
-            
+
         qs_filter = (
             Q(name__icontains=value) |
             Q(devices__name__icontains=value) |
