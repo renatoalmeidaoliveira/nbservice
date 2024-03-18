@@ -9,6 +9,10 @@ from utilities.forms import BootstrapMixin
 from utilities.forms.fields import DynamicModelMultipleChoiceField, DynamicModelChoiceField, CSVModelMultipleChoiceField
 from utilities.forms.widgets import DatePicker
 
+from netbox.forms import (
+    NetBoxModelBulkEditForm,
+    NetBoxModelImportForm,
+)
 
 from . import utils
 from . import models
@@ -17,7 +21,7 @@ class ServiceForm(BootstrapMixin, forms.ModelForm):
 
     clients = DynamicModelMultipleChoiceField(label="Clients",
         queryset=Tenant.objects.all(),
-        required=True,
+        required=False,
     )
 
     backup_profile = forms.CharField(required=False)
@@ -149,7 +153,7 @@ class ServiceFilterForm(BootstrapMixin, forms.ModelForm):
             'clients',
         ]
 
-class ServiceBulkEditForm():
+class ServiceBulkEditForm(NetBoxModelBulkEditForm):
     model = models.Service
 
     clients = DynamicModelMultipleChoiceField(
@@ -167,7 +171,7 @@ class ServiceBulkEditForm():
     class Meta:
         nullable_fields = ("clients", "comments", "backup_profile")
 
-class ServiceImportForm():
+class ServiceImportForm(NetBoxModelImportForm):
     clients = CSVModelMultipleChoiceField(
         label="Clients",
         queryset=Tenant.objects.all(),

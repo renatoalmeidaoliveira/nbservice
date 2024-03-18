@@ -53,7 +53,7 @@ class Service(modeltypes.NetBoxModel):
         Tenant, related_name="itsm_services", verbose_name="Clients"
     )
     comments = models.TextField(blank=True)
-    backup_profile = models.CharField("Backup Profile", max_length=100)
+    backup_profile = models.CharField("Backup Profile", max_length=100, blank=True, null=True)
 
     tags = TaggableManager(
         through="extras.TaggedItem",

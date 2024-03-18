@@ -27,11 +27,8 @@ class ServiceViewTestCase(
         )
         Service.objects.bulk_create(services)
 
-        tags = create_tags("Tag 1", "Tag 2", "Tag 3")
-
         cls.form_data = {
             "name": "Test Service 4",
-            "tags": [tag.pk for tag in tags],
         }
 
         cls.csv_data = (
@@ -42,9 +39,9 @@ class ServiceViewTestCase(
         )
 
         cls.csv_update_data = (
-            "id,name,description",
-            f"{services[0].pk},New Test Service 1,Description 1",
-            f"{services[1].pk},New Test Service 2,Description 2",
+            "id,name,backup_profile",
+            f"{services[0].pk},New Test Service 1,Test Profile 1",
+            f"{services[1].pk},New Test Service 2,Test Profile 2",
         )
 
     maxDiff = None

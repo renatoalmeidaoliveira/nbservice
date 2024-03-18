@@ -19,7 +19,7 @@ urlpatterns = [
     path('service/add/', views.ServiceEditView.as_view(), name='service_add'),
     path('service/edit/', views.ServiceBulkEditView.as_view(), name='service_bulk_edit'),
     path('service/delete/', views.ServiceBulkDeleteView.as_view(), name='service_bulk_delete'),
-    path('service/import/', views.ServiceBulkImportView.as_view(), name='service_import'),
+    path('service/import/', views.ServiceImportView.as_view(), name='service_import'),
     path('service/<int:pk>/delete/', views.ServiceDeleteView.as_view(), name='service_delete'),
     path('service/<int:pk>/edit/', views.ServiceEditView.as_view(), name='service_edit'),
     path('service/<int:pk>/', include(get_model_urls(app_name, 'service'))),

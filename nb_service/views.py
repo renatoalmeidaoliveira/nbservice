@@ -106,9 +106,9 @@ class ServiceEditView(generic.ObjectEditView):
 
         return data
 
-class ServiceBulkImportView(generic.BulkEditView):
+class ServiceImportView(generic.BulkImportView):
     queryset = models.Service.objects.all()
-    modelForm = forms.ServiceImportForm
+    model_form = forms.ServiceImportForm
     table = tables.ServiceTable
 
 class ServiceBulkEditView(generic.BulkEditView):
