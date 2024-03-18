@@ -11,6 +11,8 @@ from ipam.choices import ServiceProtocolChoices
 from dcim.api.nested_serializers import NestedDeviceSerializer
 from virtualization.api.nested_serializers import NestedVirtualMachineSerializer
 
+from netbox.api.serializers import NetBoxModelSerializer
+
 from nb_service import models
 from nb_service import choices
 
@@ -95,7 +97,7 @@ class ICSerializer(serializers.Serializer):
         ]
 
 
-class ServiceSerializer(serializers.Serializer):
+class ServiceSerializer(NetBoxModelSerializer):
 
     name = serializers.CharField()
     display = serializers.SerializerMethodField("get_display")
@@ -105,6 +107,26 @@ class ServiceSerializer(serializers.Serializer):
 
     def get_display(self, obj):
         return obj.name
+
+    def create(self, validated_data):
+        clients = validated_data.pop("clients", None)
+
+        service = super().create(validated_data)
+
+        if clients is not None:
+            service.clients.set(clients)
+
+        return service
+
+    def update(self, instance, validated_data):
+        clients = validated_data.pop("clients", None)
+
+        service = super().update(instance, validated_data)
+
+        if clients is not None:
+            service.clients.set(clients)
+
+        return service
 
     class Meta:
         model = models.Service

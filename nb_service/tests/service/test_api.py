@@ -21,8 +21,8 @@ class ServiceAPITestCase(
 
         services = (
             Service(name="Test Service 1", comments="Test Comment 1", backup_profile='Test Profile 1'),
-            Service(name="Test Service 2", comments="Test Comment 2", backup_profile='Test Profile 1'),
-            Service(name="Test Service 3", comments="Test Comment 3", backup_profile='Test Profile 1'),
+            Service(name="Test Service 2", comments="Test Comment 2", backup_profile='Test Profile 2'),
+            Service(name="Test Service 3", comments="Test Comment 3", backup_profile='Test Profile 3'),
         )
         Service.objects.bulk_create(services)
 
@@ -39,4 +39,8 @@ class ServiceAPITestCase(
             {"name": "Test Service 6", "comments": "Test Comment 6", "backup_profile": "Test Profile 6", "clients": [tenants[2].pk] },
         ]
 
-        cls.brief_fields = ['backup_profile', 'clients', 'comments', 'display', 'name']
+        cls.bulk_update_data = {
+            "clients": [tenants[1].pk]
+        }
+
+        cls.brief_fields = ['backup_profile', 'clients', 'comments', 'display', 'id', 'name']
