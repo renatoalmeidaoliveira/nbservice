@@ -17,10 +17,12 @@ urlpatterns = [
     path("service/", views.ServiceListView.as_view(), name="service_list"),
     path("service/<int:pk>/", views.ServiceView.as_view(), name="service"),
     path('service/add/', views.ServiceEditView.as_view(), name='service_add'),
+    path('service/edit/', views.ServiceBulkEditView.as_view(), name='service_bulk_edit'),
+    path('service/delete/', views.ServiceBulkDeleteView.as_view(), name='service_bulk_delete'),
+    path('service/import/', views.ServiceBulkImportView.as_view(), name='service_import'),
     path('service/<int:pk>/delete/', views.ServiceDeleteView.as_view(), name='service_delete'),
     path('service/<int:pk>/edit/', views.ServiceEditView.as_view(), name='service_edit'),
     path('service/<int:pk>/', include(get_model_urls(app_name, 'service'))),
-    
 
     path('relation/add', views.RelationEditView.as_view(), name='relation_add'),
     path('relation/<int:pk>/edit/', views.RelationEditView.as_view(), name='relation_edit'),
@@ -49,14 +51,14 @@ NETBOX_CURRENT_VERSION = version.parse(settings.VERSION)
 if NETBOX_CURRENT_VERSION >= version.parse("3.2"):
     from nb_service.views_3_x import   ApplicationChangeLogView
     urlpatterns_3_2 = [
-#        path("service/<int:pk>/changelog", ServiceChangeLogView.as_view(), name="service_changelog", kwargs={'model': models.Service}),    
-        path("application/<int:pk>/changelog", ApplicationChangeLogView.as_view(), name="application_changelog", kwargs={'model': models.Application}),  
+#        path("service/<int:pk>/changelog", ServiceChangeLogView.as_view(), name="service_changelog", kwargs={'model': models.Service}),
+        path("application/<int:pk>/changelog", ApplicationChangeLogView.as_view(), name="application_changelog", kwargs={'model': models.Application}),
     ]
 else:
     from extras.views import ObjectChangeLogView
     urlpatterns_2_x = [
-#        path("service/<int:pk>/changelog", ObjectChangeLogView.as_view(), name="service_changelog", kwargs={'model': models.Service}),    
-        path("application/<int:pk>/changelog", ObjectChangeLogView.as_view(), name="application_changelog", kwargs={'model': models.Application}),  
+#        path("service/<int:pk>/changelog", ObjectChangeLogView.as_view(), name="service_changelog", kwargs={'model': models.Service}),
+        path("application/<int:pk>/changelog", ObjectChangeLogView.as_view(), name="application_changelog", kwargs={'model': models.Application}),
     ]
 
 urlpatterns.extend(urlpatterns_3_2)

@@ -1,6 +1,6 @@
-from . import models 
+from . import models
 from . import filters
-from . import forms 
+from . import forms
 from . import tables
 
 from django.conf import settings
@@ -23,7 +23,6 @@ class ServiceListView(generic.ObjectListView):
     table = tables.ServiceTable
     filterset = filters.ServiceFilter
     filterset_form = forms.ServiceFilterForm
-
 
 class ServiceView(generic.ObjectView):
     queryset = models.Service.objects.all()
@@ -88,7 +87,6 @@ class ServiceDiagramView(generic.ObjectChildrenView):
             childrens = parent.relationships.all()
             return childrens
 
-
 class ServiceEditView(generic.ObjectEditView):
     queryset = models.Service.objects.all()
     model_form = forms.ServiceForm
@@ -100,13 +98,28 @@ class ServiceEditView(generic.ObjectEditView):
         else:
             self.template_name = 'nb_service/2.x/obj_edit.html'
         super().__init__(*args, *kwargs)
-    
+
     def get_extra_context(self, request, instance):
         data = {}
         if NETBOX_CURRENT_VERSION >= version.parse("3.2"):
             data['obj'] = instance
 
         return data
+
+class ServiceBulkImportView(generic.BulkEditView):
+    queryset = models.Service.objects.all()
+    modelForm = forms.ServiceImportForm
+    table = tables.ServiceTable
+
+class ServiceBulkEditView(generic.BulkEditView):
+    queryset = models.Service.objects.all()
+    filterset = filters.ServiceFilter
+    table = tables.ServiceTable
+    form = forms.ServiceBulkEditForm
+
+class ServiceBulkDeleteView(generic.BulkDeleteView):
+    queryset = models.Service.objects.all()
+    table = tables.ServiceTable
 
 if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
     from nb_service.views_3_x import ServiceDeleteView as ServiceDeleteView_3x
@@ -157,7 +170,7 @@ class ICCreateView(generic.ObjectEditView):
                 obj.assigned_object =  models.Application.objects.get(pk=request.POST['application'])
             except (ValueError, Device.DoesNotExist):
                 pass
-        
+
 
         return obj
 
@@ -173,7 +186,7 @@ class RelationEditView(generic.ObjectEditView):
         else:
             self.template_name = 'nb_service/2.x/obj_edit.html'
         super().__init__(*args, *kwargs)
-    
+
     def get_extra_context(self, request, instance):
         data = {}
         if NETBOX_CURRENT_VERSION >= version.parse("3.2"):
@@ -283,4 +296,4 @@ class ApplicationEditView(generic.ObjectEditView):
             data['obj'] = instance
 
         return data
-    
+

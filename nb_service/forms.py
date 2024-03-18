@@ -6,7 +6,7 @@ from tenancy.models import Tenant
 from ipam.models import Service
 from virtualization.models import VirtualMachine
 from utilities.forms import BootstrapMixin
-from utilities.forms.fields import DynamicModelMultipleChoiceField, DynamicModelChoiceField
+from utilities.forms.fields import DynamicModelMultipleChoiceField, DynamicModelChoiceField, CSVModelMultipleChoiceField
 from utilities.forms.widgets import DatePicker
 
 
@@ -136,7 +136,8 @@ class ServiceFilterForm(BootstrapMixin, forms.ModelForm):
         required=False,
         label='Search'
     )
-    clients = DynamicModelMultipleChoiceField(label="Clients",
+    clients = DynamicModelMultipleChoiceField(
+        label="Clients",
         queryset=Tenant.objects.all(),
         required=False,
     )
@@ -147,6 +148,40 @@ class ServiceFilterForm(BootstrapMixin, forms.ModelForm):
             'q',
             'clients',
         ]
+
+class ServiceBulkEditForm():
+    model = models.Service
+
+    clients = DynamicModelMultipleChoiceField(
+        label="Clients",
+        queryset=Tenant.objects.all(),
+        required=False,
+    )
+    comments = forms.Textarea(
+        attrs={'class': 'font-monospace'}
+    )
+    backup_profile = forms.CharField(
+        required=False,
+    )
+
+    class Meta:
+        nullable_fields = ("clients", "comments", "backup_profile")
+
+class ServiceImportForm():
+    clients = CSVModelMultipleChoiceField(
+        label="Clients",
+        queryset=Tenant.objects.all(),
+        required=False,
+        to_field_name="name",
+        error_messages={
+            "invalid_choice": "Client name not found",
+        }
+    )
+
+    class Meta:
+        model = models.Service
+        fields = ["name", "clients", "comments", "backup_profile"]
+
 
 class ApplicationFilterForm(BootstrapMixin, forms.ModelForm):
 
