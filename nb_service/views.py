@@ -121,16 +121,14 @@ class ServiceBulkDeleteView(generic.BulkDeleteView):
     queryset = models.Service.objects.all()
     table = tables.ServiceTable
 
+class ServiceDeleteView(generic.ObjectDeleteView):
+    queryset = models.Service.objects.all()
+
+
 if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-    from nb_service.views_3_x import ServiceDeleteView as ServiceDeleteView_3x
     from nb_service.views_3_x import ApplicationDeleteView as ApplicationDeleteView_3x
-    ServiceDeleteView = ServiceDeleteView_3x
     ApplicationDeleteView = ApplicationDeleteView_3x
-else:
-    from nb_service.views_2_x import ServiceDeleteView as ServiceDeleteView_2x
-    from nb_service.views_2_x import ApplicationDeleteView as ApplicationDeleteView_2x
-    ServiceDeleteView = ServiceDeleteView_2x
-    ApplicationDeleteView = ApplicationDeleteView_2x
+
 
 
 class ICCreateView(generic.ObjectEditView):

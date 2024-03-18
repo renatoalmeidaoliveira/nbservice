@@ -6,7 +6,6 @@ import taggit.managers
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("extras", "0107_cachedvalue_extras_cachedvalue_object"),
         (
             "nb_service",
             "0002_application_custom_field_data_ic_custom_field_data_and_more",
