@@ -6,7 +6,7 @@ import taggit.managers
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("extras", "0107_cachedvalue_extras_cachedvalue_object"),
+        ("extras", "0060_customlink_button_class"),
         ("nb_service", "0004_alter_service_backup_profile"),
     ]
 
