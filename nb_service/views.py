@@ -295,3 +295,18 @@ class ApplicationEditView(generic.ObjectEditView):
 
         return data
 
+class ApplicationImportView(generic.BulkImportView):
+    queryset = models.Application.objects.all()
+    model_form = forms.ApplicationImportForm
+    table = tables.ApplicationTable
+
+class ApplicationBulkEditView(generic.BulkEditView):
+    queryset = models.Application.objects.all()
+    filterset = filters.ApplicationFilter
+    table = tables.ApplicationTable
+    form = forms.ApplicationBulkEditForm
+
+class ApplicationBulkDeleteView(generic.BulkDeleteView):
+    queryset = models.Application.objects.all()
+    table = tables.ApplicationTable
+

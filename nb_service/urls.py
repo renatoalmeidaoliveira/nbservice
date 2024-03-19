@@ -15,14 +15,14 @@ app_name = 'nb_service'
 
 urlpatterns = [
     path("service/", views.ServiceListView.as_view(), name="service_list"),
+    path('service/<int:pk>/', include(get_model_urls(app_name, 'service'))),
     path("service/<int:pk>/", views.ServiceView.as_view(), name="service"),
     path('service/add/', views.ServiceEditView.as_view(), name='service_add'),
+    path('service/<int:pk>/edit/', views.ServiceEditView.as_view(), name='service_edit'),
+    path('service/<int:pk>/delete/', views.ServiceDeleteView.as_view(), name='service_delete'),
+    path('service/import/', views.ServiceImportView.as_view(), name='service_import'),
     path('service/edit/', views.ServiceBulkEditView.as_view(), name='service_bulk_edit'),
     path('service/delete/', views.ServiceBulkDeleteView.as_view(), name='service_bulk_delete'),
-    path('service/import/', views.ServiceImportView.as_view(), name='service_import'),
-    path('service/<int:pk>/delete/', views.ServiceDeleteView.as_view(), name='service_delete'),
-    path('service/<int:pk>/edit/', views.ServiceEditView.as_view(), name='service_edit'),
-    path('service/<int:pk>/', include(get_model_urls(app_name, 'service'))),
 
     path('relation/add', views.RelationEditView.as_view(), name='relation_add'),
     path('relation/<int:pk>/edit/', views.RelationEditView.as_view(), name='relation_edit'),
@@ -38,11 +38,14 @@ urlpatterns = [
 
     path('application/', views.ApplicationListView.as_view(), name='application_list'),
     path("application/<int:pk>/", views.ApplicationView.as_view(), name="application"),
-    path("application/<int:pk>/devices", views.ApplicationDevicesView.as_view(), name="application_devices"),
-    path("application/<int:pk>/vms", views.ApplicationVMsView.as_view(), name="application_vms"),
     path('application/add', views.ApplicationEditView.as_view(), name='application_add'),
     path('application/<int:pk>/edit/', views.ApplicationEditView.as_view(), name='application_edit'),
     path('application/<int:pk>/delete/', views.ApplicationDeleteView.as_view(), name='application_delete'),
+    path('application/import/', views.ApplicationImportView.as_view(), name='application_import'),
+    path('application/edit/', views.ApplicationBulkEditView.as_view(), name='application_bulk_edit'),
+    path('application/delete/', views.ApplicationBulkDeleteView.as_view(), name='application_bulk_delete'),
+    path("application/<int:pk>/devices", views.ApplicationDevicesView.as_view(), name="application_devices"),
+    path("application/<int:pk>/vms", views.ApplicationVMsView.as_view(), name="application_vms"),
 ]
 
 urlpatterns_3_2 = []

@@ -4,9 +4,17 @@ from dcim.models import Device
 from circuits.models import Circuit, Provider
 from tenancy.models import Tenant
 from ipam.models import Service
+from ipam.choices import ServiceProtocolChoices
+from ipam.constants import SERVICE_PORT_MIN, SERVICE_PORT_MAX
 from virtualization.models import VirtualMachine
 from utilities.forms import BootstrapMixin
-from utilities.forms.fields import DynamicModelMultipleChoiceField, DynamicModelChoiceField, CSVModelMultipleChoiceField
+from utilities.forms.fields import (
+    DynamicModelMultipleChoiceField,
+    DynamicModelChoiceField,
+    CSVModelMultipleChoiceField,
+    NumericArrayField,
+    CSVChoiceField,
+)
 from utilities.forms.widgets import DatePicker
 
 from netbox.forms import (
@@ -37,6 +45,13 @@ class ServiceForm(BootstrapMixin, forms.ModelForm):
 
 class ApplicationForm(BootstrapMixin, forms.ModelForm):
 
+    ports = NumericArrayField(
+        label="Ports",
+        base_field=forms.IntegerField(
+            min_value=SERVICE_PORT_MIN,
+            max_value=SERVICE_PORT_MAX
+        ),
+    )
     devices = DynamicModelMultipleChoiceField(label="Devices",
         queryset=Device.objects.all(),
         required=False,
@@ -210,3 +225,59 @@ class ApplicationFilterForm(BootstrapMixin, forms.ModelForm):
             'devices',
             'virtual_machines',
         ]
+
+class ApplicationImportForm(NetBoxModelImportForm):
+
+    devices = CSVModelMultipleChoiceField(
+        label="Devices",
+        queryset=Device.objects.all(),
+        required=False,
+        to_field_name="name",
+        error_messages={
+            "invalid_choice": "Device name not found",
+        }
+    )
+    vm = CSVModelMultipleChoiceField(
+        label="Virtual Machines",
+        queryset=VirtualMachine.objects.all(),
+        required=False,
+        to_field_name="name",
+        error_messages={
+            "invalid_choice": "Virtual machine name not found",
+        }
+    )
+
+    class Meta:
+        model = models.Application
+        fields = ["name", "protocol", "ports", "version", "devices", "vm"]
+
+class ApplicationBulkEditForm(NetBoxModelBulkEditForm):
+    model = models.Application
+
+    ports = NumericArrayField(
+        label="Ports",
+        base_field=forms.IntegerField(
+            min_value=SERVICE_PORT_MIN,
+            max_value=SERVICE_PORT_MAX
+        ),
+        help_text="Comma-separated list of one or more port numbers. A range may be specified using a hyphen.",
+        required=False,
+    )
+    protocol = CSVChoiceField(
+        label="Protocol",
+        choices=ServiceProtocolChoices,
+    )
+    devices = DynamicModelMultipleChoiceField(
+        label="Devices",
+        queryset=Device.objects.all(),
+        required=False,
+    )
+    vm = DynamicModelMultipleChoiceField(
+        label="Virtual Machines",
+        queryset=VirtualMachine.objects.all(),
+        required=False,
+    )
+
+    class Meta:
+        fields = ["protocol", "ports", "version", "devices", "vm"]
+        nullable_fields = ("devices", "vm")
