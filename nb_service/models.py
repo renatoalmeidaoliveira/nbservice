@@ -124,7 +124,7 @@ class Service(modeltypes.NetBoxModel):
 class Application(modeltypes.NetBoxModel):
     name = models.CharField("Name", max_length=100)
     protocol = models.CharField(
-        "Protocol", max_length=50, choices=ServiceProtocolChoices
+        "Protocol", max_length=50, choices=ServiceProtocolChoices, null=False, blank=False
     )
     ports = ArrayField(
         base_field=models.PositiveIntegerField(

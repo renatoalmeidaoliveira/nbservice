@@ -26,7 +26,7 @@ class NestedApplicationSerializer(WritableNestedSerializer):
         fields = ["id", "name", "display"]
 
 
-class ApplicationSerializer(serializers.Serializer):
+class ApplicationSerializer(NetBoxModelSerializer):
     id = serializers.IntegerField(read_only=True)
     name = serializers.CharField()
     display = serializers.SerializerMethodField("get_display")
@@ -50,6 +50,32 @@ class ApplicationSerializer(serializers.Serializer):
             "devices",
             "vm",
         ]
+
+    def create(self, validated_data):
+        devices = validated_data.pop("devices", None)
+        virtual_machines = validated_data.pop("vm", None)
+
+        application = super().create(validated_data)
+
+        if devices is not None:
+            application.devices.set(devices)
+        if virtual_machines is not None:
+            application.vm.set(virtual_machines)
+
+        return application
+
+    def update(self, instance, validated_data):
+        devices = validated_data.pop("devices", None)
+        virtual_machines = validated_data.pop("vm", None)
+
+        application = super().update(instance, validated_data)
+
+        if devices is not None:
+            application.devices.set(devices)
+        if virtual_machines is not None:
+            application.vm.set(virtual_machines)
+
+        return application
 
 
 class ICSerializer(serializers.Serializer):
