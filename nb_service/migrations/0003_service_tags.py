@@ -6,6 +6,7 @@ import taggit.managers
 
 class Migration(migrations.Migration):
     dependencies = [
+        ("extras", "0060_customlink_button_class"),
         (
             "nb_service",
             "0002_application_custom_field_data_ic_custom_field_data_and_more",
