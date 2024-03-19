@@ -26,3 +26,21 @@ class ServiceFilterTestCase(TestCase, ChangeLoggedFilterSetTests):
             Service(name="Service 3"),
         )
         Service.objects.bulk_create(cls.services)
+
+        cls.services[0].clients.set([cls.tenants[0].pk, cls.tenants[1].pk])
+        cls.services[1].clients.set([cls.tenants[1].pk, cls.tenants[2].pk])
+        cls.services[2].clients.set([cls.tenants[0].pk])
+
+    def test_name(self):
+        params = {'name': ['Service 1', 'Service 2']}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 2)
+
+    def test_clients(self):
+        params = {"clients": [self.tenants[0].name, self.tenants[1].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+        params = {"clients": [self.tenants[2].name]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)
+        params = {"clients_id": [self.tenants[0].pk, self.tenants[1].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 3)
+        params = {"clients_id": [self.tenants[2].pk]}
+        self.assertEqual(self.filterset(params, self.queryset).qs.count(), 1)

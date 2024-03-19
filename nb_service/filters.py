@@ -50,6 +50,11 @@ class ServiceFilter(NetBoxModelFilterSet):
     )
 
     clients = django_filters.ModelMultipleChoiceFilter(
+        field_name="clients__name",
+        queryset=Tenant.objects.all(),
+        to_field_name="name",
+    )
+    clients_id = django_filters.ModelMultipleChoiceFilter(
         field_name="clients__id",
         queryset=Tenant.objects.all(),
         to_field_name="id",
@@ -74,7 +79,7 @@ class ServiceFilter(NetBoxModelFilterSet):
             "clients",
         ]
 
-class ApplicationFilter(django_filters.FilterSet):
+class ApplicationFilter(NetBoxModelFilterSet):
 
     q = django_filters.CharFilter(
         method="search",
@@ -86,11 +91,21 @@ class ApplicationFilter(django_filters.FilterSet):
         queryset=Device.objects.all(),
         to_field_name="name",
     )
+    devices_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="devices__id",
+        queryset=Device.objects.all(),
+        to_field_name="id",
+    )
 
     virtual_machines = django_filters.ModelMultipleChoiceFilter(
         field_name="vm__name",
         queryset=VirtualMachine.objects.all(),
         to_field_name="name",
+    )
+    virtual_machines_id = django_filters.ModelMultipleChoiceFilter(
+        field_name="vm__id",
+        queryset=VirtualMachine.objects.all(),
+        to_field_name="id",
     )
 
     def search(self, queryset, name, value):
@@ -106,13 +121,14 @@ class ApplicationFilter(django_filters.FilterSet):
 
         return queryset.filter(qs_filter).distinct()
 
-
-
     class Meta:
         model = models.Application
 
         fields = [
+            "id",
             "name",
             "protocol",
             "version",
+            "devices",
+            "virtual_machines",
         ]

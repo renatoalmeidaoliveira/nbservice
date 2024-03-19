@@ -57,7 +57,7 @@ class Service(modeltypes.NetBoxModel):
 
     tags = TaggableManager(
         through="extras.TaggedItem",
-        related_name="itsm_contact_set",
+        related_name="itsm_service_set",
     )
 
 
@@ -147,6 +147,10 @@ class Application(modeltypes.NetBoxModel):
         related_name="uses_apps",
         verbose_name="Virtual Machines",
         blank=True,
+    )
+    tags = TaggableManager(
+        through="extras.TaggedItem",
+        related_name="itsm_application_set",
     )
 
     def get_absolute_url(self):
