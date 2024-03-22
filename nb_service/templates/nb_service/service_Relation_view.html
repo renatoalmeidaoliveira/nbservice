@@ -9,7 +9,7 @@
     </button>
     <ul class="dropdown-menu" aria-labeled-by="add-device-components">
         <li>
-            <a class="dropdown-item" href="{% url 'plugins:nb_service:IC_add' %}?service={{ object.pk }}&return_url={{ object.get_absolute_url }}">
+            <a class="dropdown-item" href="{% url 'plugins:nb_service:ic_add' %}?service={{ object.pk }}&return_url={{ object.get_absolute_url }}">
                 Configuration Item
             </a>
         </li>
@@ -29,22 +29,11 @@
 
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-12">
-            <div class="tab-content">
-                <div role="tabpanel" class="tab-pane active" id="details">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <strong>Configuration Items</strong>
-                                </div>
-                                {% include 'nb_service/3.x/Relation/inc/relation_table.html' %}
-                            </div>
-                        </div>
-                    </div>  
-                </div>
-            </div>
+<div class="row">
+    <div class="card">
+        <div class="card-body htmx-container table-responsive" id="object_list">
+          {% include 'htmx/table.html' %}    
         </div>
     </div>
+</div>    
 {% endblock %}

@@ -3,8 +3,6 @@ from . import filters
 from . import forms
 from . import tables
 
-from django.conf import settings
-from packaging import version
 from netbox.views import generic
 from tenancy.tables import TenantTable
 from virtualization.models import VirtualMachine
@@ -14,8 +12,6 @@ from virtualization.tables import VirtualMachineTable
 from utilities.views import ViewTab, register_model_view
 
 
-
-NETBOX_CURRENT_VERSION = version.parse(settings.VERSION)
 
 
 class ServiceListView(generic.ObjectListView):
@@ -40,7 +36,7 @@ class ServiceView(generic.ObjectView):
 @register_model_view(models.Service, name='IC')
 class ServiceICView(generic.ObjectChildrenView):
     queryset = models.Service.objects.all()
-    table = tables.ServiceTable
+    table = tables.ICTable
     template_name = "nb_service/service_IC_view.html"
     tab = ViewTab(label='IC', badge=lambda obj: obj.config_itens.all().count(), hide_if_empty=True)
 
@@ -60,7 +56,7 @@ class ServiceICView(generic.ObjectChildrenView):
 class ServiceRelationView(generic.ObjectChildrenView):
     queryset = models.Service.objects.all()
     child_model = models.Relation
-    table = tables.ServiceTable
+    table = tables.RelationTable
     template_name = "nb_service/service_Relation_view.html"
     tab = ViewTab(label='Relationships', badge=lambda obj: obj.relationships.all().count(), hide_if_empty=True)
 
@@ -69,9 +65,9 @@ class ServiceRelationView(generic.ObjectChildrenView):
             return childrens
 
     def get_extra_context(self, request, instance):
-        relations = instance.relationships.all()
+        relations = tables.RelationTable(instance.relationships.all())
         data = {
-                "relations_objs" : relations,
+                "table" : relations,
             }
         return data
 
@@ -89,22 +85,8 @@ class ServiceDiagramView(generic.ObjectChildrenView):
 
 class ServiceEditView(generic.ObjectEditView):
     queryset = models.Service.objects.all()
-    model_form = forms.ServiceForm
     form  = forms.ServiceForm
 
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/obj_edit.html'
-        else:
-            self.template_name = 'nb_service/2.x/obj_edit.html'
-        super().__init__(*args, *kwargs)
-
-    def get_extra_context(self, request, instance):
-        data = {}
-        if NETBOX_CURRENT_VERSION >= version.parse("3.2"):
-            data['obj'] = instance
-
-        return data
 
 class ServiceImportView(generic.BulkImportView):
     queryset = models.Service.objects.all()
@@ -125,33 +107,11 @@ class ServiceDeleteView(generic.ObjectDeleteView):
     queryset = models.Service.objects.all()
 
 
-if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-    from nb_service.views_3_x import ApplicationDeleteView as ApplicationDeleteView_3x
-    ApplicationDeleteView = ApplicationDeleteView_3x
-
-
-
 class ICCreateView(generic.ObjectEditView):
     queryset = models.IC.objects.all()
-    model_form = forms.ICForm
     form = forms.ICForm
 
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/IC/ic_edit.html'
-        else:
-            self.template_name = 'nb_service/2.x/IC/ic_edit.html'
-        super().__init__(*args, *kwargs)
-        self.alter_object = self.alter_obj
-
-    def get_extra_context(self, request, instance):
-        data = {}
-        if NETBOX_CURRENT_VERSION >= version.parse("3.2"):
-            data['obj'] = instance
-
-        return data
-
-    def alter_obj(self, obj, request, url_args, url_kwargs):
+    def alter_object(self, obj, request, url_args, url_kwargs):
         if 'device' in request.POST:
             try:
                 obj.assigned_object =  Device.objects.get(pk=request.POST['device'])
@@ -169,47 +129,16 @@ class ICCreateView(generic.ObjectEditView):
             except (ValueError, Device.DoesNotExist):
                 pass
 
-
         return obj
 
 
 class RelationEditView(generic.ObjectEditView):
     queryset = models.Relation.objects.all()
-    model_form = forms.RelationForm
     form = forms.RelationForm
-
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/obj_edit.html'
-        else:
-            self.template_name = 'nb_service/2.x/obj_edit.html'
-        super().__init__(*args, *kwargs)
-
-    def get_extra_context(self, request, instance):
-        data = {}
-        if NETBOX_CURRENT_VERSION >= version.parse("3.2"):
-            data['obj'] = instance
-
-        return data
 
 class PenTestEditView(generic.ObjectEditView):
     queryset = models.PenTest.objects.all()
-    model_form = forms.PenTestForm
     form = forms.PenTestForm
-
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/obj_edit.html'
-        else:
-            self.template_name = 'nb_service/2.x/obj_edit.html'
-        super().__init__(*args, *kwargs)
-
-    def get_extra_context(self, request, instance):
-        data = {}
-        if NETBOX_CURRENT_VERSION >= version.parse("3.2"):
-            data['obj'] = instance
-
-        return data
 
 class PenTestDeleteView(generic.ObjectDeleteView):
     queryset = models.PenTest.objects.all()
@@ -227,73 +156,39 @@ class ApplicationListView(generic.ObjectListView):
     filterset = filters.ApplicationFilter
     filterset_form = forms.ApplicationFilterForm
 
+
 class ApplicationView(generic.ObjectView):
     queryset = models.Application.objects.all()
 
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/Application/application_view.html'
-        else:
-            self.template_name = 'nb_service/2.x/Application/application_view.html'
-        super().__init__(*args, *kwargs)
-
-class ApplicationDevicesView(generic.ObjectView):
+@register_model_view(models.Application, name='Devices')
+class ApplicationDevicesView(generic.ObjectChildrenView):
     queryset = models.Application.objects.all()
+    child_model = Device
+    table = DeviceTable
+    template_name = "nb_service/application_objs.html"
+    tab = ViewTab(label='Devices', badge=lambda obj: obj.devices.all().count(), hide_if_empty=True)
 
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/Application/application_objs.html'
-        else:
-            self.template_name = 'nb_service/2.x/Application/application_objs.html'
-        super().__init__(*args, *kwargs)
+    def get_children(self, request, parent):
+            childrens = parent.devices.all()
+            return childrens
 
-    def get_extra_context(self, request, instance):
-        objs = instance.devices.all()
-        table = DeviceTable(objs)
-        return {
-            'Object_type': 'Devices',
-            'active_tab' : 'device',
-            'table': table,
-        }
-
-class ApplicationVMsView(generic.ObjectView):
+@register_model_view(models.Application, name='VMs')
+class ApplicationVMsView(generic.ObjectChildrenView):
     queryset = models.Application.objects.all()
+    child_model = VirtualMachine
+    table = VirtualMachineTable
+    template_name = "nb_service/application_objs.html"
+    tab = ViewTab(label='Virtual Machines', badge=lambda obj: obj.vm.all().count(), hide_if_empty=True)
 
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/Application/application_objs.html'
-        else:
-            self.template_name = 'nb_service/2.x/Application/application_objs.html'
-        super().__init__(*args, *kwargs)
+    def get_children(self, request, parent):
+            childrens = parent.vm.all()
+            return childrens
 
-
-    def get_extra_context(self, request, instance):
-        objs = instance.vm.all()
-        table = VirtualMachineTable(objs)
-        return {
-            'Object_type': 'Virtual Machines',
-            'active_tab' : 'virtual_machine',
-            'table': table,
-        }
 
 class ApplicationEditView(generic.ObjectEditView):
     queryset = models.Application.objects.all()
-    model_form = forms.ApplicationForm
     form = forms.ApplicationForm
 
-    def __init__(self, *args, **kwargs):
-        if NETBOX_CURRENT_VERSION >= version.parse("3.0") :
-            self.template_name = 'nb_service/3.x/obj_edit.html'
-        else:
-            self.template_name = 'nb_service/2.x/obj_edit.html'
-        super().__init__(*args, *kwargs)
-
-    def get_extra_context(self, request, instance):
-        data = {}
-        if NETBOX_CURRENT_VERSION >= version.parse("3.2"):
-            data['obj'] = instance
-
-        return data
 
 class ApplicationImportView(generic.BulkImportView):
     queryset = models.Application.objects.all()
@@ -310,3 +205,5 @@ class ApplicationBulkDeleteView(generic.BulkDeleteView):
     queryset = models.Application.objects.all()
     table = tables.ApplicationTable
 
+class ApplicationDeleteView(generic.ObjectDeleteView):
+    queryset = models.Application.objects.all()

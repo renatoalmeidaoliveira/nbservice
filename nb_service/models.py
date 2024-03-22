@@ -17,6 +17,7 @@ from taggit.managers import TaggableManager
 
 # Netbox imports
 from utilities.querysets import RestrictedQuerySet
+from netbox.models import NetBoxModel
 
 
 from dcim.models import Device
@@ -25,7 +26,6 @@ from tenancy.models import Tenant
 from ipam.models import Service
 from ipam.choices import ServiceProtocolChoices
 
-from . import modeltypes
 
 
 # module imports
@@ -47,7 +47,7 @@ SHAPE_NAMES = [
 ]
 
 
-class Service(modeltypes.NetBoxModel):
+class Service(NetBoxModel):
     name = models.CharField("Name", max_length=100)
     clients = models.ManyToManyField(
         Tenant, related_name="itsm_services", verbose_name="Clients"
@@ -121,7 +121,7 @@ class Service(modeltypes.NetBoxModel):
         return reverse("plugins:nb_service:service", kwargs={"pk": self.pk})
 
 
-class Application(modeltypes.NetBoxModel):
+class Application(NetBoxModel):
     name = models.CharField("Name", max_length=100)
     protocol = models.CharField(
         "Protocol", max_length=50, choices=ServiceProtocolChoices, null=False, blank=False
@@ -160,7 +160,7 @@ class Application(modeltypes.NetBoxModel):
         return f"{self.name} - {self.version}"
 
 
-class IC(modeltypes.NetBoxModel):
+class IC(NetBoxModel):
     service = models.ForeignKey(
         to=Service, on_delete=models.CASCADE, related_name="config_itens"
     )
@@ -220,7 +220,7 @@ class IC(modeltypes.NetBoxModel):
         ]
 
 
-class Relation(modeltypes.NetBoxModel):
+class Relation(NetBoxModel):
     service = models.ForeignKey(
         verbose_name="Service",
         to=Service,
@@ -264,7 +264,7 @@ class Relation(modeltypes.NetBoxModel):
         return f"{src_node} {arrow_shape[self.connector_shape -1]} {dest_node}"
 
 
-class PenTest(modeltypes.NetBoxModel):
+class PenTest(NetBoxModel):
     service = models.ForeignKey(
         to=Service, on_delete=models.CASCADE, related_name="pentest_reports"
     )

@@ -25,11 +25,14 @@ urlpatterns = [
     path('service/delete/', views.ServiceBulkDeleteView.as_view(), name='service_bulk_delete'),
 
     path('relation/add', views.RelationEditView.as_view(), name='relation_add'),
+    path('service/<int:pk>/', include(get_model_urls(app_name, 'relation'))),
     path('relation/<int:pk>/edit/', views.RelationEditView.as_view(), name='relation_edit'),
     path('relation/<int:pk>/delete/', views.RelationDeleteView.as_view(), name='relation_delete'),
 
-    path('ic/add', views.ICCreateView.as_view(), name='IC_add'),
-    path('ic/<int:pk>/delete/', views.ICDeleteView.as_view(), name='IC_delete'),
+    path('ic/add', views.ICCreateView.as_view(), name='ic_add'),
+    path('ic/<int:pk>/', include(get_model_urls(app_name, 'ic'))),
+    path('ic/<int:pk>/edit/', views.ICCreateView.as_view(), name='ic_edit'),
+    path('ic/<int:pk>/delete/', views.ICDeleteView.as_view(), name='ic_delete'),
 
     path('pentest/add', views.PenTestEditView.as_view(), name='pentest_add'),
     path('pentest/<int:pk>/edit/', views.PenTestEditView.as_view(), name='pentest_edit'),
@@ -37,6 +40,7 @@ urlpatterns = [
     path('pentest/<int:pk>/', include(get_model_urls(app_name, 'pentest'))),
 
     path('application/', views.ApplicationListView.as_view(), name='application_list'),
+    path('application/<int:pk>/', include(get_model_urls(app_name, 'application'))),
     path("application/<int:pk>/", views.ApplicationView.as_view(), name="application"),
     path('application/add', views.ApplicationEditView.as_view(), name='application_add'),
     path('application/<int:pk>/edit/', views.ApplicationEditView.as_view(), name='application_edit'),
@@ -44,25 +48,5 @@ urlpatterns = [
     path('application/import/', views.ApplicationImportView.as_view(), name='application_import'),
     path('application/edit/', views.ApplicationBulkEditView.as_view(), name='application_bulk_edit'),
     path('application/delete/', views.ApplicationBulkDeleteView.as_view(), name='application_bulk_delete'),
-    path("application/<int:pk>/devices", views.ApplicationDevicesView.as_view(), name="application_devices"),
-    path("application/<int:pk>/vms", views.ApplicationVMsView.as_view(), name="application_vms"),
 ]
 
-urlpatterns_3_2 = []
-urlpatterns_2_x = []
-NETBOX_CURRENT_VERSION = version.parse(settings.VERSION)
-if NETBOX_CURRENT_VERSION >= version.parse("3.2"):
-    from nb_service.views_3_x import   ApplicationChangeLogView
-    urlpatterns_3_2 = [
-#        path("service/<int:pk>/changelog", ServiceChangeLogView.as_view(), name="service_changelog", kwargs={'model': models.Service}),
-        path("application/<int:pk>/changelog", ApplicationChangeLogView.as_view(), name="application_changelog", kwargs={'model': models.Application}),
-    ]
-else:
-    from extras.views import ObjectChangeLogView
-    urlpatterns_2_x = [
-#        path("service/<int:pk>/changelog", ObjectChangeLogView.as_view(), name="service_changelog", kwargs={'model': models.Service}),
-        path("application/<int:pk>/changelog", ObjectChangeLogView.as_view(), name="application_changelog", kwargs={'model': models.Application}),
-    ]
-
-urlpatterns.extend(urlpatterns_3_2)
-urlpatterns.extend(urlpatterns_2_x)

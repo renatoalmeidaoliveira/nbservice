@@ -18,14 +18,14 @@ from utilities.forms.fields import (
 from utilities.forms.widgets import DatePicker
 
 from netbox.forms import (
+    NetBoxModelForm,
     NetBoxModelBulkEditForm,
     NetBoxModelImportForm,
 )
 
-from . import utils
 from . import models
 
-class ServiceForm(BootstrapMixin, forms.ModelForm):
+class ServiceForm(NetBoxModelForm):
 
     clients = DynamicModelMultipleChoiceField(label="Clients",
         queryset=Tenant.objects.all(),
@@ -43,7 +43,7 @@ class ServiceForm(BootstrapMixin, forms.ModelForm):
             "backup_profile",
         ]
 
-class ApplicationForm(BootstrapMixin, forms.ModelForm):
+class ApplicationForm(NetBoxModelForm):
 
     ports = NumericArrayField(
         label="Ports",
@@ -73,7 +73,7 @@ class ApplicationForm(BootstrapMixin, forms.ModelForm):
             "vm",
         ]
 
-class ICForm(BootstrapMixin, forms.ModelForm):
+class ICForm(NetBoxModelForm):
 
     device = DynamicModelChoiceField(
         queryset=Device.objects.all(),
@@ -84,7 +84,7 @@ class ICForm(BootstrapMixin, forms.ModelForm):
         required=False,
     )
 
-    application = utils.DynamicModelChoiceField(
+    application = DynamicModelChoiceField(
         queryset=models.Application.objects.all(),
         required=False,
     )
@@ -96,7 +96,7 @@ class ICForm(BootstrapMixin, forms.ModelForm):
         ]
 
 
-class PenTestForm(BootstrapMixin, forms.ModelForm):
+class PenTestForm(NetBoxModelForm):
 
     class Meta:
         model = models.PenTest
@@ -113,26 +113,24 @@ class PenTestForm(BootstrapMixin, forms.ModelForm):
             'date': DatePicker(),
         }
 
-class RelationForm(BootstrapMixin, forms.ModelForm):
+class RelationForm(NetBoxModelForm):
 
-    source = utils.DynamicModelChoiceField(
+    source = DynamicModelChoiceField(
         queryset=models.IC.objects.all(),
         required=True,
         label='Source',
         query_params={
             'service_id': '$service',
         },
-        display_field='name',
     )
 
-    destination = utils.DynamicModelChoiceField(
+    destination = DynamicModelChoiceField(
         queryset=models.IC.objects.all(),
         required=True,
         label='Destination',
         query_params={
             'service_id': '$service',
         },
-        display_field='name',
     )
 
     link_text = forms.CharField(required=False)
