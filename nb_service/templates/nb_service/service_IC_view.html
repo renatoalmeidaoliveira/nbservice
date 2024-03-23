@@ -1,0 +1,39 @@
+{% extends 'generic/object.html' %}
+
+{% load static %}
+
+{% block extra_controls %}
+<div class="dropdown">
+    <button id="add-device-components" type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="mdi mdi-plus-thick" aria-hidden="true"></i> Add Components
+    </button>
+    <ul class="dropdown-menu" aria-labeled-by="add-device-components">
+        <li>
+            <a class="dropdown-item" href="{% url 'plugins:nb_service:ic_add' %}?service={{ object.pk }}&return_url={{ object.get_absolute_url }}">
+                Configuration Item
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{% url 'plugins:nb_service:pentest_add' %}?service={{ object.pk }}&return_url={{ object.get_absolute_url }}">
+                Vulnerability assessment
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{% url 'plugins:nb_service:relation_add' %}?service={{ object.pk }}&return_url={{ object.get_absolute_url }}">
+                Configuration Item Relationship
+            </a>
+        </li>
+    </ul>
+</div>  
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="card">
+        <h5 class="card-header">Configuration Itens</h5>
+        <div class="card-body htmx-container table-responsive" id="object_list">
+          {% include 'htmx/table.html' %}    
+        </div>
+    </div>
+</div>    
+{% endblock %}

@@ -3,12 +3,8 @@ from packaging import version
 import django_tables2 as tables
 
 
-NETBOX_CURRENT_VERSION = version.parse(settings.VERSION)
-if NETBOX_CURRENT_VERSION >= version.parse("3.2") :
-    from netbox.tables import NetBoxTable, ToggleColumn
-else: 
-    from utilities.tables import BaseTable as NetBoxTable
-    from utilities.tables import ToggleColumn
+from netbox.tables import NetBoxTable, ToggleColumn , columns
+
 
 from . import models
 
@@ -31,6 +27,7 @@ class ICTable(NetBoxTable):
     id = ToggleColumn()
     assigned_object = tables.LinkColumn(verbose_name="CI")
     obj_type = tables.Column(verbose_name="Type")
+    actions = columns.ActionsColumn(actions=("delete",))
     
     class Meta(NetBoxTable.Meta):
         model = models.IC        
@@ -65,3 +62,22 @@ class ApplicationTable(NetBoxTable):
             "protocol",
             "ports",
          ]
+        
+class RelationTable(NetBoxTable):
+    id = ToggleColumn()
+
+    service = tables.LinkColumn(verbose_name="Service")
+    source = tables.LinkColumn(verbose_name="Source")
+    destination = tables.LinkColumn(verbose_name="Destination")
+    
+    class Meta(NetBoxTable.Meta):
+        model = models.Relation
+        fields = [
+            "service",
+            "source",
+            "source_shape",
+            "destination",
+            "destination_shape",
+            "connector_shape",
+            "link_text",            
+        ]

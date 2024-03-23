@@ -1,0 +1,14 @@
+{% extends 'generic/object.html' %}
+{% load render_table from django_tables2 %}
+
+{% load static %}
+
+{% block content %}
+    <div class="row">
+        <div class="card">
+            <div class="card-body htmx-container table-responsive" id="object_list">
+              {% include 'htmx/table.html' %}    
+        </div>
+          </div>
+    </div>     
+ {% endblock %}

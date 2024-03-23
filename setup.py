@@ -32,7 +32,9 @@ setup(
     url='https://github.com/renatoalmeidaoliveira/nbservice',
     author='Renato Almeida de Oliveira',
     author_email='renato.almeida.oliveira@gmail.com',
-    install_requires=[],
+    install_requires=[
+        'drf_yasg',
+    ],
     packages=find_packages(),
     include_package_data=True,
     package_data={

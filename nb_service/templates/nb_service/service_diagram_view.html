@@ -1,0 +1,53 @@
+{% extends 'generic/object.html' %}
+
+{% load static %}
+
+{% block extra_controls %}
+<div class="dropdown">
+    <button id="add-device-components" type="button" class="btn btn-sm btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="mdi mdi-plus-thick" aria-hidden="true"></i> Add Components
+    </button>
+    <ul class="dropdown-menu" aria-labeled-by="add-device-components">
+        <li>
+            <a class="dropdown-item" href="{% url 'plugins:nb_service:ic_add' %}?service={{ object.pk }}&return_url={{ object.get_absolute_url }}">
+                Configuration Item
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{% url 'plugins:nb_service:pentest_add' %}?service={{ object.pk }}&return_url={{ object.get_absolute_url }}">
+                Vulnerability assessment
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{% url 'plugins:nb_service:relation_add' %}?service={{ object.pk }}&return_url={{ object.get_absolute_url }}">
+                Configuration Item Relationship
+            </a>
+        </li>
+    </ul>
+</div>  
+{% endblock %}
+
+{% block head %}
+<script src="{% static 'nb_service/mermaid.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="details">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="mermaid" style="text-align: center; width: 100%; overflow-x: scroll; ">
+                                    {{ object.diagram | safe }}                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'nb_service/export_svg.js' %}"></script>
+{% endblock %}

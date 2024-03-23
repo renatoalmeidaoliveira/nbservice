@@ -3,8 +3,12 @@
 
 ## Compatibility
 
-This plugin in compatible with [NetBox](https://netbox.readthedocs.org/) 2.10 and later.
-Tested in versions: 2.10.6; 2.11.12; 3.1.11; 3.2.1
+
+| Plugin Version | NetBox Version | Tested on                      |
+| ------------- |:-------------| :-----:|
+| 1.0.7          | < 3.2.1        | 2.10.6; 2.11.12; 3.1.11; 3.2.1 |
+| 2.0.0          | > 3.7.0        | 3.7.0, 3.7.4                   |
+
 
 ## Installation
 
