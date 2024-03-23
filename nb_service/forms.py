@@ -19,6 +19,7 @@ from utilities.forms.widgets import DatePicker
 
 from netbox.forms import (
     NetBoxModelForm,
+    NetBoxModelFilterSetForm,
     NetBoxModelBulkEditForm,
     NetBoxModelImportForm,
 )
@@ -146,6 +147,21 @@ class RelationForm(NetBoxModelForm):
             "connector_shape",
             "link_text",
         ]
+
+class RelationFilterForm(NetBoxModelFilterSetForm):
+    model = models.Relation
+
+    class Meta:
+        fields = [
+            'service',
+            'source',
+            'source_shape',
+            'destination',
+            'destination_shape',
+            "connector_shape",
+            "link_text",
+        ]
+
 
 class ServiceFilterForm(BootstrapMixin, forms.ModelForm):
 

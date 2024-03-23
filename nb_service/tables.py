@@ -3,7 +3,8 @@ from packaging import version
 import django_tables2 as tables
 
 
-from netbox.tables import NetBoxTable, ToggleColumn
+from netbox.tables import NetBoxTable, ToggleColumn , columns
+
 
 from . import models
 
@@ -26,6 +27,7 @@ class ICTable(NetBoxTable):
     id = ToggleColumn()
     assigned_object = tables.LinkColumn(verbose_name="CI")
     obj_type = tables.Column(verbose_name="Type")
+    actions = columns.ActionsColumn(actions=("delete",))
     
     class Meta(NetBoxTable.Meta):
         model = models.IC        
@@ -63,6 +65,10 @@ class ApplicationTable(NetBoxTable):
         
 class RelationTable(NetBoxTable):
     id = ToggleColumn()
+
+    service = tables.LinkColumn(verbose_name="Service")
+    source = tables.LinkColumn(verbose_name="Source")
+    destination = tables.LinkColumn(verbose_name="Destination")
     
     class Meta(NetBoxTable.Meta):
         model = models.Relation

@@ -44,12 +44,6 @@ class ServiceICView(generic.ObjectChildrenView):
             childrens = parent.config_itens.all()
             return childrens
 
-    def get_extra_context(self, request, instance):
-        items_obj = instance.config_itens.all()
-        data = {
-                "config_items" : items_obj,
-            }
-        return data
 
 
 @register_model_view(models.Service, name='Relationships')
@@ -171,6 +165,14 @@ class ApplicationDevicesView(generic.ObjectChildrenView):
     def get_children(self, request, parent):
             childrens = parent.devices.all()
             return childrens
+    
+    def get_extra_context(self, request, instance):
+        device_table = DeviceTable(instance.devices.all())
+        device_table.exclude = ('actions',)
+        data = {
+                "table" : device_table,
+            }
+        return data
 
 @register_model_view(models.Application, name='VMs')
 class ApplicationVMsView(generic.ObjectChildrenView):
@@ -184,6 +186,13 @@ class ApplicationVMsView(generic.ObjectChildrenView):
             childrens = parent.vm.all()
             return childrens
 
+    def get_extra_context(self, request, instance):
+        vm_table = VirtualMachineTable(instance.vm.all())
+        vm_table.exclude = ('actions',)
+        data = {
+                "table" : vm_table,
+            }
+        return data
 
 class ApplicationEditView(generic.ObjectEditView):
     queryset = models.Application.objects.all()
@@ -207,3 +216,12 @@ class ApplicationBulkDeleteView(generic.BulkDeleteView):
 
 class ApplicationDeleteView(generic.ObjectDeleteView):
     queryset = models.Application.objects.all()
+
+class RelationListView(generic.ObjectListView):
+    queryset = models.Relation.objects.all()
+    table = tables.RelationTable
+    filterset = filters.RelationFilter
+    filterset_form = forms.RelationFilterForm
+
+class RelationView(generic.ObjectView):
+    queryset = models.Relation.objects.all()

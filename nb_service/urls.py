@@ -24,8 +24,10 @@ urlpatterns = [
     path('service/edit/', views.ServiceBulkEditView.as_view(), name='service_bulk_edit'),
     path('service/delete/', views.ServiceBulkDeleteView.as_view(), name='service_bulk_delete'),
 
+    path('relation/', views.RelationListView.as_view(), name='relation_list'),
+    path('relation/<int:pk>/', include(get_model_urls(app_name, 'relation'))),
+    path('relation/<int:pk>/', views.RelationView.as_view(), name='relation'),
     path('relation/add', views.RelationEditView.as_view(), name='relation_add'),
-    path('service/<int:pk>/', include(get_model_urls(app_name, 'relation'))),
     path('relation/<int:pk>/edit/', views.RelationEditView.as_view(), name='relation_edit'),
     path('relation/<int:pk>/delete/', views.RelationDeleteView.as_view(), name='relation_delete'),
 

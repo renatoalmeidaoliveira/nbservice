@@ -132,3 +132,13 @@ class ApplicationFilter(NetBoxModelFilterSet):
             "devices",
             "virtual_machines",
         ]
+
+class RelationFilter(NetBoxModelFilterSet):
+
+    class Meta:
+        model = models.Relation
+
+        fields = [
+            "id",
+            "service",
+        ]

@@ -256,6 +256,63 @@ class Relation(NetBoxModel):
         arrow_shape = ["-->", "---", "-.->", "-.-"]
         return f"{arrow_shape[self.connector_shape -1]}"
 
+    def get_absolute_url(self):
+        return reverse("plugins:nb_service:relation", kwargs={"pk": self.pk})
+    
+    @property
+    def diagram(self):
+        graph = "graph TB\n"
+        open_shape = [
+            "(",
+            "([",
+            "[[",
+            "[(",
+            "((",
+            ">",
+            "{",
+            "{{",
+            "[/",
+            "[/",
+        ]
+
+        close_shape = [
+            ")",
+            "])",
+            "]]",
+            ")]",
+            "))",
+            "]",
+            "}",
+            "}}",
+            "/]",
+            "\]",
+        ]
+        arrow_shape = ["-->", "---", "-.->", "-.-"]
+        nodes = {}
+        relations = [ self ]
+        for rel in relations:
+            src_node = rel.source.name.replace(" ", "_")
+            dest_node = rel.destination.name.replace(" ", "_")
+            if src_node not in nodes:
+                nodes[src_node] = rel.source.get_absolute_url()
+            if dest_node not in nodes:
+                nodes[dest_node] = rel.destination.get_absolute_url()
+
+            graph += (
+                f"    {src_node}{open_shape[rel.source_shape -1]}"
+                + f"{rel.source.name}{close_shape[rel.source_shape -1]}"
+                + f" {arrow_shape[rel.connector_shape -1]} "
+            )
+            if rel.link_text != "":
+                graph += f"| {rel.link_text} |"
+            graph += (
+                f"{dest_node}{open_shape[rel.destination_shape -1]}"
+                + f"{rel.destination.name}{close_shape[rel.destination_shape -1]}\n"
+            )
+        for node in nodes:
+            graph += f'click {node} "{nodes[node]}"\n'
+        return graph
+    
     def __str__(self) -> str:
         arrow_shape = ["-->", "---", "-.->", "-.-"]
         src_node = self.source.name.replace(" ", "_")
