@@ -1,13 +1,13 @@
 from netbox.api.viewsets import NetBoxModelViewSet
 
 from nb_service import models
-from nb_service import filters
+from nb_service import filtersets
 from . import serializers
 
 class ICViewSet(NetBoxModelViewSet):
     queryset = models.IC.objects.all()
     serializer_class = serializers.ICSerializer
-    filterset_class = filters.ICFilter
+    filterset_class = filtersets.ICFilter
 
 
 class ServiceViewSet(NetBoxModelViewSet):

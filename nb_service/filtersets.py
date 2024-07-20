@@ -42,7 +42,7 @@ class ICFilter(django_filters.FilterSet):
             "service",
         ]
 
-class ServiceFilter(NetBoxModelFilterSet):
+class ServiceFilterSet(NetBoxModelFilterSet):
 
     q = django_filters.CharFilter(
         method="search",
@@ -79,7 +79,7 @@ class ServiceFilter(NetBoxModelFilterSet):
             "clients",
         ]
 
-class ApplicationFilter(NetBoxModelFilterSet):
+class ApplicationFilterSet(NetBoxModelFilterSet):
 
     q = django_filters.CharFilter(
         method="search",

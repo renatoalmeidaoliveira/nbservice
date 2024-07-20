@@ -4,12 +4,12 @@ from tenancy.models import Tenant
 from utilities.testing import ChangeLoggedFilterSetTests
 
 from nb_service.models import Service
-from nb_service.filters import ServiceFilter
+from nb_service.filtersets import ServiceFilterSet
 
 
 class ServiceFilterTestCase(TestCase, ChangeLoggedFilterSetTests):
     queryset = Service.objects.all()
-    filterset = ServiceFilter
+    filterset = ServiceFilterSet
 
     @classmethod
     def setUpTestData(cls):

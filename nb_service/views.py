@@ -1,5 +1,5 @@
 from . import models
-from . import filters
+from . import filtersets
 from . import forms
 from . import tables
 
@@ -17,7 +17,7 @@ from utilities.views import ViewTab, register_model_view
 class ServiceListView(generic.ObjectListView):
     queryset = models.Service.objects.all()
     table = tables.ServiceTable
-    filterset = filters.ServiceFilter
+    filterset = filtersets.ServiceFilterSet
     filterset_form = forms.ServiceFilterForm
 
 class ServiceView(generic.ObjectView):
@@ -89,7 +89,7 @@ class ServiceImportView(generic.BulkImportView):
 
 class ServiceBulkEditView(generic.BulkEditView):
     queryset = models.Service.objects.all()
-    filterset = filters.ServiceFilter
+    filterset = filtersets.ServiceFilterSet
     table = tables.ServiceTable
     form = forms.ServiceBulkEditForm
 
@@ -147,7 +147,7 @@ class ICDeleteView(generic.ObjectDeleteView):
 class ApplicationListView(generic.ObjectListView):
     queryset = models.Application.objects.all()
     table = tables.ApplicationTable
-    filterset = filters.ApplicationFilter
+    filterset = filtersets.ApplicationFilterSet
     filterset_form = forms.ApplicationFilterForm
 
 
@@ -206,7 +206,7 @@ class ApplicationImportView(generic.BulkImportView):
 
 class ApplicationBulkEditView(generic.BulkEditView):
     queryset = models.Application.objects.all()
-    filterset = filters.ApplicationFilter
+    filterset = filtersets.ApplicationFilterSet
     table = tables.ApplicationTable
     form = forms.ApplicationBulkEditForm
 
@@ -220,7 +220,7 @@ class ApplicationDeleteView(generic.ObjectDeleteView):
 class RelationListView(generic.ObjectListView):
     queryset = models.Relation.objects.all()
     table = tables.RelationTable
-    filterset = filters.RelationFilter
+    filterset = filtersets.RelationFilter
     filterset_form = forms.RelationFilterForm
 
 class RelationView(generic.ObjectView):

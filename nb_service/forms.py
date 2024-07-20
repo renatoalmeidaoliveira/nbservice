@@ -7,7 +7,6 @@ from ipam.models import Service
 from ipam.choices import ServiceProtocolChoices
 from ipam.constants import SERVICE_PORT_MIN, SERVICE_PORT_MAX
 from virtualization.models import VirtualMachine
-from utilities.forms import BootstrapMixin
 from utilities.forms.fields import (
     DynamicModelMultipleChoiceField,
     DynamicModelChoiceField,
@@ -163,7 +162,7 @@ class RelationFilterForm(NetBoxModelFilterSetForm):
         ]
 
 
-class ServiceFilterForm(BootstrapMixin, forms.ModelForm):
+class ServiceFilterForm(forms.ModelForm):
 
     q = forms.CharField(
         required=False,
@@ -216,7 +215,7 @@ class ServiceImportForm(NetBoxModelImportForm):
         fields = ["name", "clients", "comments", "backup_profile"]
 
 
-class ApplicationFilterForm(BootstrapMixin, forms.ModelForm):
+class ApplicationFilterForm(forms.ModelForm):
 
     q = forms.CharField(
         required=False,
