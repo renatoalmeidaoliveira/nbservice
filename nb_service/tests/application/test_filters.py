@@ -6,12 +6,12 @@ from dcim.models import Device, DeviceRole, Manufacturer, DeviceType, Site
 from ipam.choices import ServiceProtocolChoices
 
 from nb_service.models import Application
-from nb_service.filters import ApplicationFilter
+from nb_service.filtersets import ApplicationFilterSet
 
 
 class ApplicationFilterTestCase(TestCase, ChangeLoggedFilterSetTests):
     queryset = Application.objects.all()
-    filterset = ApplicationFilter
+    filterset = ApplicationFilterSet
 
     @classmethod
     def setUpTestData(cls):
