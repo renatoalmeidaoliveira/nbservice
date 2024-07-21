@@ -63,4 +63,4 @@ class ApplicationAPITestCase(
             "devices": [devices[0].pk, devices[1].pk],
         }
 
-        cls.brief_fields = ['display', 'id', 'name']
+        cls.brief_fields = ['devices', 'display', 'id', 'name', 'ports', 'protocol', 'version', 'vm']

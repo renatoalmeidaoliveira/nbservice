@@ -77,6 +77,7 @@ class ServiceFilterSet(NetBoxModelFilterSet):
             "id",
             "name",
             "clients",
+            "backup_profile",
         ]
 
 class ApplicationFilterSet(NetBoxModelFilterSet):
