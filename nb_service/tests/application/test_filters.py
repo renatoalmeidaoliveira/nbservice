@@ -13,8 +13,10 @@ class ApplicationFilterTestCase(TestCase, ChangeLoggedFilterSetTests):
     queryset = Application.objects.all()
     filterset = ApplicationFilterSet
 
+
     @classmethod
     def setUpTestData(cls):
+        cls.ignore_fields = [ "vm", "devices" ]
         site = Site.objects.create(name="Site 1")
         manufacturer = Manufacturer.objects.create(name='Manufacturer 1')
         device_type = DeviceType.objects.create(manufacturer=manufacturer)

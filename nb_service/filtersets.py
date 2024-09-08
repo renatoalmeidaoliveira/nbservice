@@ -109,6 +109,11 @@ class ApplicationFilterSet(NetBoxModelFilterSet):
         to_field_name="id",
     )
 
+    ports = django_filters.NumberFilter(
+        field_name="ports",
+        lookup_expr="contains",
+    )
+
     def search(self, queryset, name, value):
 
         if not value.strip():

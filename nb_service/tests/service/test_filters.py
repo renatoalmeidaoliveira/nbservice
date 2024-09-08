@@ -10,9 +10,10 @@ from nb_service.filtersets import ServiceFilterSet
 class ServiceFilterTestCase(TestCase, ChangeLoggedFilterSetTests):
     queryset = Service.objects.all()
     filterset = ServiceFilterSet
-
+    
     @classmethod
     def setUpTestData(cls):
+        cls.ignore_fields = ( "clients", )
         cls.tenants = (
             Tenant(name="Tenant 1", slug="tenant-1"),
             Tenant(name="Tenant 2", slug="tenant-2"),

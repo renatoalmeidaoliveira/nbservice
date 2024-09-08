@@ -1,4 +1,3 @@
-from drf_yasg.utils import swagger_serializer_method
 from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
 
@@ -6,24 +5,16 @@ from netbox.api.fields import ChoiceField, ContentTypeField
 from netbox.api.serializers import WritableNestedSerializer
 
 from utilities.api import get_serializer_for_model
-from tenancy.api.nested_serializers import NestedTenantSerializer
+from tenancy.api.serializers import TenantSerializer
+
 from ipam.choices import ServiceProtocolChoices
-from dcim.api.nested_serializers import NestedDeviceSerializer
-from virtualization.api.nested_serializers import NestedVirtualMachineSerializer
+from dcim.api.serializers import DeviceSerializer
+from virtualization.api.serializers import VirtualMachineSerializer
 
 from netbox.api.serializers import NetBoxModelSerializer
 
 from nb_service import models
 from nb_service import choices
-
-
-class NestedApplicationSerializer(WritableNestedSerializer):
-    id = serializers.IntegerField(read_only=True)
-    name = serializers.CharField()
-
-    class Meta:
-        model = models.Application
-        fields = ["id", "name", "display"]
 
 
 class ApplicationSerializer(NetBoxModelSerializer):
@@ -32,8 +23,8 @@ class ApplicationSerializer(NetBoxModelSerializer):
     display = serializers.SerializerMethodField("get_display")
     protocol = ChoiceField(choices=ServiceProtocolChoices, required=False)
     version = serializers.CharField()
-    devices = NestedDeviceSerializer(many=True, required=False, allow_null=True)
-    vm = NestedVirtualMachineSerializer(many=True, required=False, allow_null=True)
+    devices = DeviceSerializer(many=True, required=False, allow_null=True, nested=True)
+    vm = VirtualMachineSerializer(many=True, required=False, allow_null=True, nested=True)
 
     def get_display(self, obj):
         return f"{obj}"
@@ -102,13 +93,12 @@ class ICSerializer(serializers.Serializer):
     def get_display(self, obj):
         return obj.name
 
-    @swagger_serializer_method(serializer_or_field=serializers.DictField)
     def get_assigned_object(self, obj):
         if obj.assigned_object is None:
             return None
-        serializer = get_serializer_for_model(obj.assigned_object, prefix="Nested")
+        serializer = get_serializer_for_model(obj.assigned_object)
         context = {"request": self.context["request"]}
-        return serializer(obj.assigned_object, context=context).data
+        return serializer(obj.assigned_object, nested=True, context=context).data
 
     class Meta:
         model = models.IC
@@ -127,7 +117,7 @@ class ServiceSerializer(NetBoxModelSerializer):
 
     name = serializers.CharField()
     display = serializers.SerializerMethodField("get_display")
-    clients = NestedTenantSerializer(many=True, required=False, allow_null=True)
+    clients = TenantSerializer(many=True, required=False, allow_null=True, nested=True)
     comments = serializers.CharField()
     backup_profile = serializers.CharField(required=False)
 

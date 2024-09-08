@@ -30,11 +30,9 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url='https://github.com/renatoalmeidaoliveira/nbservice',
-    author='Renato Almeida de Oliveira',
+    author='Renato Almeida de Oliveira Zaroubin',
     author_email='renato.almeida.oliveira@gmail.com',
-    install_requires=[
-        'drf_yasg',
-    ],
+    install_requires=[],
     packages=find_packages(),
     include_package_data=True,
     package_data={
