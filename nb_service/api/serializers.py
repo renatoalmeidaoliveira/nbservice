@@ -88,7 +88,7 @@ class ICSerializer(serializers.Serializer):
     )
     assigned_object = serializers.SerializerMethodField(read_only=True)
 
-    assigned_object_id = serializers.IntegerField(source="assigned_object.id")
+    assigned_object_id = serializers.IntegerField(source="assigned_object.id", write_only=True)
 
     def get_display(self, obj):
         return obj.name

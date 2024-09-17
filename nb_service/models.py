@@ -91,6 +91,11 @@ class Service(NetBoxModel):
         ]
         arrow_shape = ["-->", "---", "-.->", "-.-"]
         nodes = {}
+        for ic in self.config_itens.all():
+            node = ic.name.replace(" ", "_")
+            graph += f"{node}\n"
+            if node not in nodes:
+                nodes[node] = ic.get_absolute_url()
         for rel in self.relationships.all():
             src_node = rel.source.name.replace(" ", "_")
             dest_node = rel.destination.name.replace(" ", "_")
