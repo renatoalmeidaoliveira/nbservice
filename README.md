@@ -30,6 +30,16 @@ Runs /opt/netbox/upgrade.sh
 sudo /opt/netbox/upgrade.sh
 ```
 
+## Configuration
+
+```python
+PLUGINS_CONFIG = {
+    "nb_service": {
+        "top_level_menu": True # If set to True the plugin will add a top level menu item for the plugin. If set to False the plugin will add a menu item under the Plugins menu item.  Default is set to True.
+    },
+}
+```
+
 # Screenshots
 
 ## Versions 2.X

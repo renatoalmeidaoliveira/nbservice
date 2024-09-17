@@ -13,7 +13,9 @@ class NbserviceConfig(PluginConfig):
     min_version = "4.1.0"
     max_version = "4.1.99"
     required_settings = []
-    default_settings = {}
+    default_settings = {
+        "top_level_menu": True
+    }
 
     def ready(self):
         from . import signals
